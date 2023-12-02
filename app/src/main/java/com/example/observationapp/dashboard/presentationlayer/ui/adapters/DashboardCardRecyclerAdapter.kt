@@ -13,8 +13,8 @@ class DashboardCardRecyclerAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val infalter = LayoutInflater.from(parent.context)
-        val binding = CardLayoutBinding.inflate(infalter, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = CardLayoutBinding.inflate(inflater, parent, false)
         return ItemViewHolder(binding.root)
     }
 

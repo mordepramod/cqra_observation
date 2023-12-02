@@ -21,18 +21,36 @@
             app:title="@string/dashboard" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerImages"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutDashboard" />
+
+    <LinearLayout
+        android:id="@+id/llDots"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPagerImages"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItems"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:clipToPadding="false"
-        android:clipChildren="false"
+        app:layout_constraintTop_toBottomOf="@+id/viewPagerImages"
         tools:itemCount="3"
-        tools:listitem="@layout/card_layout"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutDashboard" />
+        tools:listitem="@layout/card_layout" />
     <!--<com.google.android.material.card.MaterialCardView
         android:layout_width="100dp"
         android:layout_height="100dp"
