@@ -12,7 +12,7 @@
         <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
         <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
         <item name="colorTertiary">@color/md_theme_light_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
         <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
         <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
         <item name="colorError">@color/md_theme_light_error</item>
@@ -44,13 +44,13 @@
 
     <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
-        <item name="titleTextColor">@color/md_theme_light_onTertiary</item>
-        <item name="navigationIconTint">@color/md_theme_light_onTertiary</item>
+        <item name="titleTextColor">@color/md_theme_onTertiary</item>
+        <item name="navigationIconTint">@color/md_theme_onTertiary</item>
     </style>
 
     <style name="ThemeOverlay.App.Toolbar" parent="">
         <!-- Tint the menu and overflow icons -->
-        <item name="colorControlNormal">@color/md_theme_light_onTertiary</item>
+        <item name="colorControlNormal">@color/md_theme_onTertiary</item>
     </style>
 
 </resources>

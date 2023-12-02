@@ -16,10 +16,15 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+
     private fun clickListeners() {
         binding.btnLogin.setOnClickListener {
             launchActivity<DashboardActivity>()
         }
 
+    }
+
+    companion object {
+        private const val TAG = "LoginActivity"
     }
 }

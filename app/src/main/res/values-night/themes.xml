@@ -12,7 +12,7 @@
         <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
         <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
         <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
-        <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
         <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
         <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
         <item name="colorError">@color/md_theme_dark_error</item>
@@ -34,6 +34,8 @@
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>-->
     </style>
 
+    <style name="Theme.ObservationApp" parent="Base.Theme.ObservationApp" />
+
     <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
         <!-- Change the background color of the AppBarLayout so the AppBarLayout is green.
                 The toolbar is transparent by default so you will see this color through the toolbar. -->
@@ -42,12 +44,18 @@
 
     <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
-        <item name="titleTextColor">@color/md_theme_dark_onTertiary</item>
-        <item name="navigationIconTint">@color/md_theme_dark_onTertiary</item>
+        <item name="titleTextColor">@color/md_theme_onTertiary</item>
+        <item name="navigationIconTint">@color/md_theme_onTertiary</item>
     </style>
 
     <style name="ThemeOverlay.App.Toolbar" parent="">
         <!-- Tint the menu and overflow icons -->
-        <item name="colorControlNormal">@color/md_theme_dark_onTertiary</item>
+        <item name="colorControlNormal">@color/md_theme_onTertiary</item>
     </style>
+
+    <!-- <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+         <item name="windowSplashScreenBackground">@color/md_theme_dark_onTertiary</item>
+         <item name="postSplashScreenTheme">@style/Theme.ObservationApp</item>
+         <item name="windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
+     </style>-->
 </resources>
