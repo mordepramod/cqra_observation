@@ -21,48 +21,16 @@
             app:title="@string/dashboard" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerImages"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutDashboard" />
-
-    <LinearLayout
-        android:id="@+id/llDots"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="@+id/viewPagerImages"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center"
-        android:orientation="horizontal" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvItems"
+    <fragment
+        android:id="@+id/navHost"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewPagerImages"
-        tools:itemCount="3"
-        tools:listitem="@layout/card_layout" />
-    <!--<com.google.android.material.card.MaterialCardView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutDashboard">
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayoutDashboard"
+        app:navGraph="@navigation/nav_dashboard" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Observation" />
-    </com.google.android.material.card.MaterialCardView>
--->
 </androidx.constraintlayout.widget.ConstraintLayout>

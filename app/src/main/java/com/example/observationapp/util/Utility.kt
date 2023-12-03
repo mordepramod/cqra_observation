@@ -13,4 +13,5 @@ object Utility {
     }
 
     inline fun <reified T : Any> createIntent(context: Context) = Intent(context, T::class.java)
+
 }
