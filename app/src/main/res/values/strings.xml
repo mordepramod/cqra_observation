@@ -4,4 +4,17 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="dashboard">Dashboard</string>
+    <string name="client_name">Client name</string>
+    <string name="project_name">Project name</string>
+    <string name="structure_name">Structure name</string>
+    <string name="stage_floor">Stage/Floor</string>
+    <string name="trade_group">Trade Group</string>
+    <string name="activity">Activity</string>
+    <string name="accountable">Accountable</string>
+    <string name="observation_severity">Observation Severity</string>
+    <string name="reference">Reference</string>
+    <string name="remark">Remark</string>
+    <string name="description">Description</string>
+    <string name="observation_type">Observation type</string>
+    <string name="add_observation">Add Observation</string>
 </resources>
