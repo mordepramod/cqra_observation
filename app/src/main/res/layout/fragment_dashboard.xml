@@ -41,6 +41,18 @@
             tools:itemCount="3"
             tools:listitem="@layout/card_layout" />
 
+        <include
+            android:id="@+id/llProgress"
+            layout="@layout/circular_progress_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

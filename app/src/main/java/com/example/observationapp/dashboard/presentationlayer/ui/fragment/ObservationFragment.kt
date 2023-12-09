@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.observationapp.dashboard.domainlayer.ObservationViewModel
 import com.example.observationapp.databinding.FragmentObservationBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ObservationFragment : Fragment() {
     private lateinit var binding: FragmentObservationBinding
 
