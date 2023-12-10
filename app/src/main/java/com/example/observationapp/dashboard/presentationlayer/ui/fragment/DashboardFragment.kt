@@ -74,15 +74,12 @@ class DashboardFragment : Fragment() {
     }
 
     private fun liveDataObservers() {
-        val startTime = System.currentTimeMillis()
         showProgress()
         viewModel.getProjectsList()
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
-                Log.d(
-                    TAG,
-                    "liveDataObservers: showProgress :${System.currentTimeMillis() - startTime}"
-                )
+                Log.e(TAG, "liveDataObservers: $it")
+                //viewModel.saveDb(it.result,startTime)
                 hideProgress()
             }
 

@@ -1,7 +1,7 @@
 package com.example.observationapp.dashboard.domainlayer
 
 import android.util.Log
-import com.example.observationapp.models.ProjectModelList
+import com.example.observationapp.models.ProjectModel
 import com.example.observationapp.repository.server.ApiHelper
 import com.example.observationapp.util.APIResult
 import java.net.HttpURLConnection
@@ -14,13 +14,13 @@ class ProjectListRepo @Inject constructor() {
 
     @Inject
     lateinit var apiService: ApiHelper
-    suspend fun getProjectListAPI(): APIResult<ProjectModelList> {
+    suspend fun getProjectListAPI(): APIResult<ProjectModel> {
         return try {
-            val gdprResponse = apiService.getProjectListAPI()
-            if (gdprResponse.isSuccessful && gdprResponse.code() == HttpURLConnection.HTTP_OK) {
-                APIResult.success(gdprResponse.body()!!)
+            val projectModelResponse = apiService.getProjectListAPI()
+            if (projectModelResponse.isSuccessful && projectModelResponse.code() == HttpURLConnection.HTTP_OK) {
+                APIResult.success(projectModelResponse.body()!!)
             } else {
-                APIResult.error(gdprResponse.message(), null, null)
+                APIResult.error(projectModelResponse.message(), null, null)
             }
         } catch (exception: Exception) {
             Log.e(TAG, "getProjectListAPI: ", exception)
