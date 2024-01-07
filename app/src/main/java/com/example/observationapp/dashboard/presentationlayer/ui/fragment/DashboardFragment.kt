@@ -104,7 +104,7 @@ class DashboardFragment : Fragment() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
-            }
+                }
 
         })
     }
