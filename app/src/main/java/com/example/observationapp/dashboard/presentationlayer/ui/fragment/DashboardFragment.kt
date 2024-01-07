@@ -71,22 +71,15 @@ class DashboardFragment : Fragment() {
         adapterClickListener()
         liveDataObservers()
         return binding.root
-
-
-
-
     }
 
     private fun liveDataObservers() {
-        val startTime = System.currentTimeMillis()
-        // showProgress()
-        //viewModel.getProjectsList()
+        showProgress()
+        viewModel.getProjectsList()
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
-                Log.d(
-                    TAG,
-                    "liveDataObservers: showProgress :${System.currentTimeMillis() - startTime}"
-                )
+                Log.e(TAG, "liveDataObservers: $it")
+                //viewModel.saveDb(it.result,startTime)
                 hideProgress()
             }
 
@@ -94,12 +87,12 @@ class DashboardFragment : Fragment() {
 
     }
 
-    fun showProgress() {
+    private fun showProgress() {
         binding.llProgress.pbText.text = getString(R.string.loading_data)
         binding.llProgress.root.visible()
     }
 
-    fun hideProgress() {
+    private fun hideProgress() {
         binding.llProgress.root.gone()
     }
 
@@ -107,10 +100,6 @@ class DashboardFragment : Fragment() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
-                findNavController().navigate(R.id.action_observationFragment_to_fragmentQuestionsAnswers)
-//                findNavController().navigate(R.id.action_dashboardFragment_to_fragmentManagement)
-//               findNavController().navigate(R.id.action_dashboardFragment_to_fragmentViewMaterial)
-//                findNavController().navigate(R.id.action_fragmentViewMaterial_to_fragmentHistory)
             }
 
         })
