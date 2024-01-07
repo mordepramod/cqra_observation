@@ -87,12 +87,12 @@ class DashboardFragment : Fragment() {
 
     }
 
-    fun showProgress() {
+    private fun showProgress() {
         binding.llProgress.pbText.text = getString(R.string.loading_data)
         binding.llProgress.root.visible()
     }
 
-    fun hideProgress() {
+    private fun hideProgress() {
         binding.llProgress.root.gone()
     }
 
