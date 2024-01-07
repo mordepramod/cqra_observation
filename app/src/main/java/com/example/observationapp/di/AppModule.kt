@@ -1,5 +1,7 @@
 package com.example.observationapp.di
 
+import com.example.observationapp.repository.server.ApiHelper
+import com.example.observationapp.repository.server.ApiRepository
 import com.example.observationapp.repository.server.ApiServices
 import com.example.observationapp.util.CommonConstant.BASE_URL
 import com.example.observationapp.util.CommonConstant.CONNECTION_TIMEOUT
@@ -67,5 +69,8 @@ object AppModule {
             .build()
             .create(ApiServices::class.java)
 
+    @Provides
+    @Singleton
+    fun provideApiHelper(apiHelper: ApiRepository): ApiHelper = apiHelper
 
 }

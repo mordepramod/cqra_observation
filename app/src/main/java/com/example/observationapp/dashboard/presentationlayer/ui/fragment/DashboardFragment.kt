@@ -3,6 +3,7 @@ package com.example.observationapp.dashboard.presentationlayer.ui.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,17 +25,24 @@ import com.example.observationapp.dashboard.presentationlayer.ui.adapters.Dashbo
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.ImageSlideAdapter
 import com.example.observationapp.databinding.FragmentDashboardBinding
 import com.example.observationapp.util.ItemOffsetDecoration
+import com.example.observationapp.util.gone
+import com.example.observationapp.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DashboardFragment : Fragment() {
-    private val imageList = ArrayList<Int>()
+
+    private lateinit var imageList: ArrayList<Int>
     private var dots: Array<ImageView?> = arrayOfNulls(INITIAL_VALUE)
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var handler: Handler
     private lateinit var adapter: DashboardCardRecyclerAdapter
 
     companion object {
+        private const val TAG = "DashboardFragment"
+
         //fun newInstance() = DashboardFragment()
         private const val DELAY_TIME_VALUE = 2500L
         private const val SPAN_COUNT = 2
@@ -49,7 +57,7 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)
@@ -61,11 +69,38 @@ class DashboardFragment : Fragment() {
         viewPagerCallBack()
         showDotsOnViewPager()
         adapterClickListener()
+        liveDataObservers()
         return binding.root
 
 
 
 
+    }
+
+    private fun liveDataObservers() {
+        val startTime = System.currentTimeMillis()
+        showProgress()
+        viewModel.getProjectsList()
+        viewModel.projectList.observe(viewLifecycleOwner) {
+            it?.let {
+                Log.d(
+                    TAG,
+                    "liveDataObservers: showProgress :${System.currentTimeMillis() - startTime}"
+                )
+                hideProgress()
+            }
+
+        }
+
+    }
+
+    fun showProgress() {
+        binding.llProgress.pbText.text = getString(R.string.loading_data)
+        binding.llProgress.root.visible()
+    }
+
+    fun hideProgress() {
+        binding.llProgress.root.gone()
     }
 
     private fun adapterClickListener() {
@@ -157,6 +192,7 @@ class DashboardFragment : Fragment() {
 
 
     private fun slidingImageAdapter() {
+        imageList = arrayListOf()
         imageList.add(R.drawable.ic_launcher_background)
         imageList.add(R.drawable.ic_launcher_background)
         imageList.add(R.drawable.ic_launcher_background)
