@@ -70,16 +70,16 @@ class DashboardFragment : Fragment() {
         showDotsOnViewPager()
         adapterClickListener()
         liveDataObservers()
+        loadProjectData()
         return binding.root
+    }
 
-
-
-
+    private fun loadProjectData() {
+        viewModel.getProjectsList()
     }
 
     private fun liveDataObservers() {
         showProgress()
-        viewModel.getProjectsList()
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e(TAG, "liveDataObservers: $it")

@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -33,7 +34,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGson() = GsonBuilder().setLenient().create()
+    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
     @Provides
     @Singleton
@@ -56,6 +57,7 @@ object AppModule {
         }
         return OkHttpClient.Builder()
             .addInterceptor(requestInterceptor)
+            .connectTimeout(connectionTimeOut(), TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
     }
