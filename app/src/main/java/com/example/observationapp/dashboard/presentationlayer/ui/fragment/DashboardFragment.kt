@@ -75,7 +75,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadProjectData() {
-        viewModel.getProjectsList()
+        if (!viewModel.apiSuccess)
+            viewModel.getProjectsList()
     }
 
     private fun liveDataObservers() {
@@ -83,7 +84,6 @@ class DashboardFragment : Fragment() {
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e(TAG, "liveDataObservers: $it")
-                //viewModel.saveDb(it.result,startTime)
                 hideProgress()
             }
 

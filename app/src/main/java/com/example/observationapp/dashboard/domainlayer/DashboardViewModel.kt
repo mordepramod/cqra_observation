@@ -18,6 +18,7 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         private const val TAG = "DashboardViewModel"
     }
 
+    var apiSuccess: Boolean = false
     private var _projectList = MutableLiveData<Boolean>()
     val projectList: LiveData<Boolean> = _projectList
 
@@ -31,6 +32,7 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
                 when (it.status) {
                     APIResult.Status.SUCCESS -> {
+                        apiSuccess = true
                         saveDb(it.data!!.result, startTime)
                     }
 
