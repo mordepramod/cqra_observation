@@ -17,4 +17,5 @@
     <string name="description">Description</string>
     <string name="observation_type">Observation type</string>
     <string name="add_observation">Add Observation</string>
+    <string name="loading_data">Loading Data…</string>
 </resources>

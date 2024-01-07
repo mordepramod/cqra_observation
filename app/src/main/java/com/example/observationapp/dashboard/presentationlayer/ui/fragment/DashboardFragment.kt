@@ -3,6 +3,7 @@ package com.example.observationapp.dashboard.presentationlayer.ui.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +25,15 @@ import com.example.observationapp.dashboard.presentationlayer.ui.adapters.Dashbo
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.ImageSlideAdapter
 import com.example.observationapp.databinding.FragmentDashboardBinding
 import com.example.observationapp.util.ItemOffsetDecoration
+import com.example.observationapp.util.gone
+import com.example.observationapp.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class DashboardFragment : Fragment() {
+
     private lateinit var imageList: ArrayList<Int>
     private var dots: Array<ImageView?> = arrayOfNulls(INITIAL_VALUE)
     private lateinit var binding: FragmentDashboardBinding
@@ -35,6 +41,8 @@ class DashboardFragment : Fragment() {
     private lateinit var adapter: DashboardCardRecyclerAdapter
 
     companion object {
+        private const val TAG = "DashboardFragment"
+
         //fun newInstance() = DashboardFragment()
         private const val DELAY_TIME_VALUE = 2500L
         private const val SPAN_COUNT = 2
@@ -61,7 +69,31 @@ class DashboardFragment : Fragment() {
         viewPagerCallBack()
         showDotsOnViewPager()
         adapterClickListener()
+        liveDataObservers()
         return binding.root
+    }
+
+    private fun liveDataObservers() {
+        showProgress()
+        viewModel.getProjectsList()
+        viewModel.projectList.observe(viewLifecycleOwner) {
+            it?.let {
+                Log.e(TAG, "liveDataObservers: $it")
+                //viewModel.saveDb(it.result,startTime)
+                hideProgress()
+            }
+
+        }
+
+    }
+
+    private fun showProgress() {
+        binding.llProgress.pbText.text = getString(R.string.loading_data)
+        binding.llProgress.root.visible()
+    }
+
+    private fun hideProgress() {
+        binding.llProgress.root.gone()
     }
 
     private fun adapterClickListener() {
