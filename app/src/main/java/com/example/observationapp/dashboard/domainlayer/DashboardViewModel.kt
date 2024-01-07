@@ -49,30 +49,41 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     private fun saveDb(list: List<ProjectModelItem>, startTime: Long) {
         viewModelScope.launch {
             projectListRepo.deleteAll()
-            val value = projectListRepo.saveProjectList(list)
-            list.forEach {
-                Log.e(TAG, "saveDb: ${it.structureModel}")
-                val value = projectListRepo.saveStructureList(it.structureModel)
-                Log.e(TAG, "saveDb structureModel: $value")
-                it.structureModel.forEach {
-                    val value = projectListRepo.saveStageModelsList(it.stageModels)
-                    Log.e(TAG, "saveDb stageModels: $value")
-                    it.stageModels.forEach {
-                        val value = projectListRepo.saveUnitModelsList(it.unitModels)
-                        Log.e(TAG, "saveDb unitModels: $value")
-                        it.unitModels.forEach {
-                            val value = projectListRepo.saveSubUnitModelsList(it.subunit)
-                            Log.e(TAG, "saveDb subunit: $value")
+            val projectValue = projectListRepo.saveProjectList(list)
+            list.forEach { projectModelItem ->
+                Log.e(TAG, "saveDb: projectModelItem ${projectModelItem.structureModel}")
+                if (projectModelItem.structureModel.isNotEmpty()) {
+                    val structureValue =
+                        projectListRepo.saveStructureList(projectModelItem.structureModel)
+                    Log.e(TAG, "saveDb structureModel: $structureValue")
+                    projectModelItem.structureModel.forEach { structuralModelValue ->
+                        if (structuralModelValue.stageModels.isNotEmpty()) {
+                            val stageValue =
+                                projectListRepo.saveStageModelsList(structuralModelValue.stageModels)
+                            Log.e(TAG, "saveDb stageModels: $stageValue")
+                            structuralModelValue.stageModels.forEach { stageModel ->
+                                if (stageModel.unitModels.isNotEmpty()) {
+                                    val unitValue =
+                                        projectListRepo.saveUnitModelsList(stageModel.unitModels)
+                                    Log.e(TAG, "saveDb unitModels: $unitValue")
+                                    stageModel.unitModels.forEach {
+                                        if (it.subunit.isNotEmpty()) {
+                                            val subUnitValue =
+                                                projectListRepo.saveSubUnitModelsList(it.subunit)
+                                            Log.e(TAG, "saveDb subunit: $subUnitValue")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-            Log.e(TAG, "saveDb project: $value")
+            Log.e(TAG, "saveDb project: $projectValue")
             Log.d(
                 TAG,
                 "liveDataObservers: showProgress :${System.currentTimeMillis() - startTime}"
             )
-
             _projectList.value = true
         }
     }

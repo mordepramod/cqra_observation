@@ -75,6 +75,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadProjectData() {
+        Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}")
         if (!viewModel.apiSuccess)
             viewModel.getProjectsList()
     }
