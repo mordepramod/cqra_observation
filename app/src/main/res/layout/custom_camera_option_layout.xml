@@ -30,9 +30,9 @@
                     android:layout_marginStart="@dimen/dimen_25dp"
                     android:layout_marginTop="@dimen/dimen_10dp"
                     android:lineSpacingExtra="@dimen/dimen_6sp"
-                    android:text="@string/addphoto"
+                    android:text="@string/add_photo"
                     android:textColor="#223326"
-                    android:textSize="@dimen/dimen_20dp"
+                    android:textSize="@dimen/dimen_20sp"
                     android:textStyle="normal"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -61,7 +61,7 @@
                         android:layout_marginStart="@dimen/dimen_15dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="@dimen/dimen_5dp"
-                        android:text="@string/takephoto"
+                        android:text="@string/take_photo"
                         android:textColor="#223326"
                         android:textSize="@dimen/dimen_16sp"
                         android:textStyle="normal" />
@@ -91,7 +91,7 @@
                         android:layout_marginStart="@dimen/dimen_15dp"
                         android:gravity="center_vertical"
                         android:lineSpacingExtra="@dimen/dimen_5dp"
-                        android:text="@string/choosefromgallary"
+                        android:text="@string/choose_from_gallary"
                         android:textColor="#223326"
                         android:textSize="@dimen/dimen_16sp"
                         android:textStyle="normal" />

@@ -41,8 +41,6 @@
                 android:layout_marginStart="@dimen/dimen_10dp"
                 android:layout_marginEnd="@dimen/dimen_10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-
-
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/questionsAnsToolbar"
@@ -54,13 +52,11 @@
                 android:layout_width="@dimen/dimen_0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_5dp"
-
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-
                 app:layout_constraintEnd_toEndOf="@+id/txtProjectName"
                 app:layout_constraintStart_toStartOf="@+id/txtProjectName"
                 app:layout_constraintTop_toBottomOf="@+id/txtProjectName"
-                tools:text="@string/SelectedGroup" />
+                tools:text="@string/selected_group" />
 
             <TextView
                 android:id="@+id/tvHeadingName"
@@ -71,8 +67,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/txtProjectName"
                 app:layout_constraintStart_toStartOf="@+id/txtProjectName"
                 app:layout_constraintTop_toBottomOf="@+id/tvGroupName"
-                tools:text="@string/SelectedHeading" />
-
+                tools:text="@string/selected_heading" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView"
@@ -96,10 +91,10 @@
                         android:id="@+id/tvQuestionName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/dimen_15dp"
+                        android:textSize="@dimen/dimen_15sp"
                         android:layout_marginTop="@dimen/dimen_10dp"
                         app:drawableRightCompat="@drawable/ic_info"
-                        tools:text="@string/QuestionName" />
+                        tools:text="@string/question_name" />
                     <RadioGroup
                         android:id="@+id/llQuestionType1"
                         android:layout_width="match_parent"
@@ -141,8 +136,6 @@
                             android:onClick="checkButton"
                             android:text="@string/na" />
 
-
-
                     </RadioGroup>
 
                 <LinearLayout
@@ -150,9 +143,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
-
-
 
                 </LinearLayout>
 
@@ -176,7 +166,7 @@
                             android:id="@+id/tiedUnitOfMeasure"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:digits="@string/allowed_char_for_edit_unit_of_measure"
+                            android:digits="@string/allowed_char_for_edit"
                             android:inputType="textMultiLine" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -198,8 +188,6 @@
                             android:hint="@string/select_UOM"
                            />
                     </com.google.android.material.textfield.TextInputLayout>
-
-
 
                 </LinearLayout>
 
@@ -239,14 +227,9 @@
                             android:inputType="textMultiLine" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
-
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabSave"
@@ -276,7 +259,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_35dp"
-               android:layout_marginTop="@dimen/dimen_40dp"
+                android:layout_marginTop="@dimen/dimen_40dp"
                 android:backgroundTint="@color/md_theme_secondary"
                 app:fabSize="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -293,7 +276,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dimen_5dp"
-                android:text="@string/CaptureImage"
+                android:text="@string/capture_image"
                 app:layout_constraintBottom_toTopOf="@+id/fabCaptureImage"
                 app:layout_constraintEnd_toEndOf="@+id/fabCaptureImage"
                 app:layout_constraintStart_toStartOf="@+id/fabCaptureImage" />
@@ -304,7 +287,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/dimen_35dp"
-               android:layout_marginTop="@dimen/dimen_40dp"
+                android:layout_marginTop="@dimen/dimen_40dp"
                 android:backgroundTint="@color/md_theme_secondary"
                 app:fabSize="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -323,18 +306,8 @@
                 app:layout_constraintEnd_toEndOf="@+id/fabCancel"
                 app:layout_constraintStart_toStartOf="@+id/fabCancel" />
 
-
-
-
-
-
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </ScrollView>
-
 
 </layout>

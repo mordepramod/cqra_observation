@@ -13,7 +13,6 @@
     <color name="md_theme_onTertiary">#FFFFFF</color>
     <color name="md_theme_tertiaryContainer">#C0E9FA</color>
     <color name="md_theme_onTertiaryContainer">#001F28</color>
-    <string name="allowed_char_for_edit_unit_of_measure">0123456789.</string>
     <color name="md_theme_error">#BA1A1A</color>
     <color name="md_theme_errorContainer">#FFDAD6</color>
     <color name="md_theme_onError">#FFFFFF</color>

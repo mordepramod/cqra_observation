@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FragmentViewMaterial">
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/MaterialToolbar"
         android:layout_width="match_parent"
@@ -23,8 +22,7 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:padding="@dimen/dimen_4dp"
-
-            android:text="@string/addmaterial"
+            android:text="@string/add_material"
             android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -166,8 +164,6 @@
                     app:layout_constraintEnd_toEndOf="@+id/fabCaptureImage"
                     app:layout_constraintStart_toStartOf="@+id/fabCaptureImage" />
 
-
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btngallary"
                     android:layout_width="@dimen/dimen_150dp"
@@ -178,16 +174,9 @@
                     android:layout_marginLeft="@dimen/dimen_10dp"
                     android:text="@string/gallary"
                     />
-
-
-
-
-
             </LinearLayout>
 
         </LinearLayout>
-
-
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
