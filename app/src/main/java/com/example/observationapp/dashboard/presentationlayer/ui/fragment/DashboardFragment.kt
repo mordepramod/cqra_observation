@@ -71,6 +71,10 @@ class DashboardFragment : Fragment() {
         adapterClickListener()
         liveDataObservers()
         return binding.root
+
+
+
+
     }
 
     private fun liveDataObservers() {

@@ -29,4 +29,5 @@ class ObservationFragment : Fragment() {
         return binding.root
     }
 
+
 }

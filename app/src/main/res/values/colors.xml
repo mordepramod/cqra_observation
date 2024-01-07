@@ -28,6 +28,7 @@
     <color name="md_theme_outlineVariant">#C0C9C1</color>
     <color name="md_theme_scrim">#000000</color>
     <color name="md_theme_surface">#F8FAF6</color>
+    <color name="purple_700">#FF3700B3</color>
     <color name="md_theme_onSurface">#191C1A</color>
     <color name="md_theme_surfaceVariant">#DCE5DD</color>
     <color name="md_theme_onSurfaceVariant">#404943</color>
