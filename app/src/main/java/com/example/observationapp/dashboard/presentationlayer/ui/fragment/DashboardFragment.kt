@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
-    private val imageList = ArrayList<Int>()
+    private lateinit var imageList: ArrayList<Int>
     private var dots: Array<ImageView?> = arrayOfNulls(INITIAL_VALUE)
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var handler: Handler
@@ -49,7 +49,7 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)
@@ -149,6 +149,7 @@ class DashboardFragment : Fragment() {
 
 
     private fun slidingImageAdapter() {
+        imageList = arrayListOf()
         imageList.add(R.drawable.ic_launcher_background)
         imageList.add(R.drawable.ic_launcher_background)
         imageList.add(R.drawable.ic_launcher_background)
