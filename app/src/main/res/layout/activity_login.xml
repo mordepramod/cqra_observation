@@ -70,7 +70,7 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:singleLine="true"
-                    android:drawableLeft="@drawable/lock_24"
+                    android:drawableStart="@drawable/lock_24"
                     tools:ignore="VisualLintTextFieldSize" />
 
             </com.google.android.material.textfield.TextInputLayout>
