@@ -62,12 +62,20 @@ class DashboardFragment : Fragment() {
         showDotsOnViewPager()
         adapterClickListener()
         return binding.root
+
+
+
+
     }
 
     private fun adapterClickListener() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
+                findNavController().navigate(R.id.action_observationFragment_to_fragmentQuestionsAnswers)
+//                findNavController().navigate(R.id.action_dashboardFragment_to_fragmentManagement)
+//               findNavController().navigate(R.id.action_dashboardFragment_to_fragmentViewMaterial)
+//                findNavController().navigate(R.id.action_fragmentViewMaterial_to_fragmentHistory)
             }
 
         })

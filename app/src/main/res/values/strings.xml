@@ -2,7 +2,6 @@
     <string name="app_name">ObservationApp</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="login">Login</string>
     <string name="dashboard">Dashboard</string>
     <string name="client_name">Client name</string>
     <string name="project_name">Project name</string>
@@ -10,6 +9,54 @@
     <string name="stage_floor">Stage/Floor</string>
     <string name="trade_group">Trade Group</string>
     <string name="activity">Activity</string>
+    <string name="newobservation">New Observation</string>
+    <string name="history">History</string>
+    <string name="goodwork">Good Work</string>
+    <string name="reports">Reports</string>
+    <string name="addphoto">Add Photo</string>
+    <string name="CementStoreisdryandleakproof">Cement Store is dry and leak proof</string>
+    <string name="choosefromgallary">Choose From Gallary</string>
+    <string name="AgeofCementusedatsiteasspecified">Age of Cement used at site as specified</string>
+    <string name="HeightofStacknotexceedinglimits">Height of Stack not exceeding limits</string>
+    <string name="CementBagsarenotdirectlyrestingonground">Cement Bags are not directly resting on ground</string>
+    <string name="FIFOsystemimplementFirstInFirstOut">FIFO system implement(First In First Out)</string>
+    <string name="Adequatespaceavailablearoundbetweenstacksandexteriorwallas">Adequate space available around/between stacks and exterior walla</string>
+    <string name="view">View</string>
+    <string name="MaterialNameCement">Material Name:Cement</string>
+    <string name="MaterialNameReinforcedConcrete">Material Name:Reinforced Concrete</string>
+    <string name="MaterialNameSteel">Material Name:Steel</string>
+    <string name="MaterialNameSand">Material Name:Sand</string>
+    <string name="MaterialNameSurfaceFinishing">Material Name:SurfaceFinishing</string>
+    <string name="SelectedGroup">Selected Group</string>
+    <string name="SelectedHeading">Selected Heading</string>
+    <string name="QuestionName">Question Name</string>
+    <string name="conformity">Conformity</string>
+    <string name="low"> Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="na">N/A</string>
+    <string name="save">Save</string>
+    <string name="CaptureImage">Capture Image</string>
+    <string name="cancel">Cancel</string>
+    <string name="addmaterial">Add Material</string>
+    <string name="gallary">Gallary</string>
+    <string name="login">Login</string>
+    <string name="takephoto">Take Photo</string>
+    <string name="camera">Camera</string>
+
+
+
+    <string name="project">Project</string>
+    <string name="material">Material</string>
+    <string name="unit_of_measure">Value</string>
+    <string name="select_UOM">Select UOM</string>
+    <string name="hint_enter_sub_location">Enter sub location</string>
+
+    <string name="allowed_char_for_edit">abcdefghijklmnopqrstuvwxyz0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ.,!@%()?_-+="':;/&amp;)</string>
+    <string name="question_answer">Question &amp; Answer</string>
+    <string name="quantity">Quantity</string>
+    <string name="unitprice">UnitPrice</string>
+    <string name="Status">Quantity</string>
     <string name="accountable">Accountable</string>
     <string name="observation_severity">Observation Severity</string>
     <string name="reference">Reference</string>
@@ -17,4 +64,6 @@
     <string name="description">Description</string>
     <string name="observation_type">Observation type</string>
     <string name="add_observation">Add Observation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
