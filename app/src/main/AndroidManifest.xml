@@ -21,9 +21,6 @@
         android:theme="@style/Theme.ObservationApp"
         tools:targetApi="31">
         <activity
-            android:name=".ViewMaterialActivity"
-            android:exported="false" />
-        <activity
             android:name=".dashboard.presentationlayer.ui.activity.DashBoadScreen"
             android:exported="false" />
         <activity
