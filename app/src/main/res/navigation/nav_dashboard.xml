@@ -14,10 +14,20 @@
             android:id="@+id/dashboardFragment_to_observationFragment"
             app:destination="@id/observationFragment" />
 
+
     </fragment>
     <fragment
         android:id="@+id/observationFragment"
         android:name="com.example.observationapp.dashboard.presentationlayer.ui.fragment.ObservationFragment"
         android:label="Observation"
-        tools:layout="@layout/fragment_observation" />
+        tools:layout="@layout/fragment_observation" >
+        <action
+            android:id="@+id/action_observationFragment_to_fragmentQuestionsAnswers"
+            app:destination="@id/fragmentQuestionsAnswers" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentQuestionsAnswers"
+        android:name="com.example.observationapp.FragmentQuestionsAnswers"
+        android:label="fragment_questions_answers"
+        tools:layout="@layout/fragment_questions_answers" />
 </navigation>
