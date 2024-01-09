@@ -30,6 +30,6 @@ data class ProjectModelItem(
     @SerializedName("structure")
     var structureModel: List<StructureModel> = listOf()
     override fun toString(): String {
-        return "ProjectModelItem(structureModel=$structureModel)"
+        return project_name
     }
 }
