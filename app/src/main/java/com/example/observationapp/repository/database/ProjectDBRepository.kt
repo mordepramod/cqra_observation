@@ -28,5 +28,17 @@ class ProjectDBRepository @Inject constructor(
 
     suspend fun deleteAll() = projectDao.deleteAll()
 
+    suspend fun getStructureList(projectId: String): List<StructureModel> {
+        return projectDao.getStructureListOnProjectId(projectId)
+    }
+
+    suspend fun getStageOrFloorList(structureId: String): List<StageModel> {
+        return projectDao.getStageOrFloorList(structureId)
+    }
+
+    suspend fun getUnitList(stageOrFloorId: String): List<UnitModel> {
+        return projectDao.getUnitList(stageOrFloorId)
+    }
+
     val projectList: LiveData<List<ProjectModelItem>> = projectDao.getAllProjectList()
 }

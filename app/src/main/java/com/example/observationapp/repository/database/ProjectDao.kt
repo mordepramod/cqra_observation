@@ -34,4 +34,13 @@ interface ProjectDao {
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_PROJECT}")
     fun getAllProjectList(): LiveData<List<ProjectModelItem>>
+
+    @Query("SELECT * FROM ${ApplicationDBTables.TABLE_STRUCTURE} WHERE project_id = :projectId")
+    suspend fun getStructureListOnProjectId(projectId: String): List<StructureModel>
+
+    @Query("SELECT * FROM ${ApplicationDBTables.TABLE_STAGE} WHERE structure_id = :structureId")
+    suspend fun getStageOrFloorList(structureId: String): List<StageModel>
+
+    @Query("SELECT * FROM ${ApplicationDBTables.TABLE_UNIT} WHERE stage_id = :stageOrFloorId")
+    suspend fun getUnitList(stageOrFloorId: String): List<UnitModel>
 }

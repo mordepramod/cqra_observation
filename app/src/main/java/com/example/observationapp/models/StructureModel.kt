@@ -35,6 +35,6 @@ data class StructureModel(
     @SerializedName("stages")
     var stageModels: List<StageModel> = listOf()
     override fun toString(): String {
-        return "StructureModel(stageModels=$stageModels "
+        return structure_name
     }
 }

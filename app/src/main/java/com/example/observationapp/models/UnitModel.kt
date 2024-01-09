@@ -28,4 +28,9 @@ data class UnitModel(
 ) : Parcelable {
     @Ignore
     var subunit: List<SubUnitModel> = listOf()
+    override fun toString(): String {
+        return unit_area
+    }
+
+
 }
