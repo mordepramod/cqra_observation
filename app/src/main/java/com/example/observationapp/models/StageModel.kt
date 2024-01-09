@@ -29,4 +29,9 @@ data class StageModel(
     @Ignore
     @SerializedName("units")
     var unitModels: List<UnitModel> = listOf()
+    override fun toString(): String {
+        return stage_name
+    }
+
+
 }
