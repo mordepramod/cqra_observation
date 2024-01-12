@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/dimen_80dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dimen_5dp"
+    android:background="@drawable/corner_design"
+    android:padding="@dimen/dimen_4dp">
+
+
+    <ImageView
+        android:id="@+id/imgToolIcon"
+        android:layout_width="@dimen/dimen_35dp"
+        android:layout_height="@dimen/dimen_35dp"
+        android:layout_margin="@dimen/dimen_4dp"
+        android:layout_marginBottom="@dimen/dimen_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_save" />
+
+    <TextView
+        android:id="@+id/txtTool"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_4dp"
+        android:textSize="@dimen/dimen_12sp"
+        android:textColor="@color/md_theme_onPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgToolIcon"
+        tools:text="@string/brush" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

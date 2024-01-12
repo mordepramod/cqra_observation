@@ -39,6 +39,7 @@
     <string name="capture_image">Capture Image</string>
     <string name="cancel">Cancel</string>
     <string name="add_material">Add Material</string>
+    <string name="brush">Brush</string>
     <string name="gallary">Gallary</string>
     <string name="login">Login</string>
     <string name="take_photo">Take Photo</string>
@@ -47,6 +48,11 @@
     <string name="material">Material</string>
     <string name="unit_of_measure">Value</string>
     <string name="select_UOM">Select UOM</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="info">Information!</string>
+    <string name="are_you_sure_want_to_save_image">Are you sure want to save this Image?</string>
+    <string name="are_you_sure_want_to_save_this">Are you sure want to save this?</string>
     <string name="hint_enter_sub_location">Enter sub location</string>
     <string name="allowed_char_for_edit">abcdefghijklmnopqrstuvwxyz0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ.,!@%()?_-+="':;/&amp;)</string>
     <string name="question_answer">Question &amp; Answer</string>

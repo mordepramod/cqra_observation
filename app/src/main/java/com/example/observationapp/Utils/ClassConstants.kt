@@ -4,6 +4,10 @@ class ClassConstants {
 
 
     object imageCount {
+        operator fun inc(): ClassConstants.imageCount {
+
+            return TODO("Provide the return value")
+        }
 
         var imageCount = 0
 
