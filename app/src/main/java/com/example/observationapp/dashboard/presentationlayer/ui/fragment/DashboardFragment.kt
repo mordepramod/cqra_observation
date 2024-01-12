@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -50,14 +50,13 @@ class DashboardFragment : Fragment() {
         private const val MARGIN_PIX_VALUE = 40
     }
 
-    private lateinit var viewModel: DashboardViewModel
+    private val viewModel: DashboardViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)

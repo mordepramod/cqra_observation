@@ -5,9 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.observationapp.models.ProjectModelItem
+import com.example.observationapp.models.ObservationData
+import com.example.observationapp.models.ProjectDataModel
 import com.example.observationapp.util.APIResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,16 +27,22 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var projectListRepo: ProjectListUseCase
+
+    @Inject
+    lateinit var observationListUseCase: ObservationListUseCase
     fun getProjectsList() {
         val startTime = System.currentTimeMillis()
         viewModelScope.launch {
             val res = projectListRepo.getProjectListFlow()
-            res.collect {
+            res.collect { it ->
 
                 when (it.status) {
                     APIResult.Status.SUCCESS -> {
                         apiSuccess = true
-                        saveDb(it.data!!.result, startTime)
+                        it.data?.let {
+                            saveProjectDb(it.result, startTime)
+                        }
+
                     }
 
                     APIResult.Status.ERROR -> {
@@ -46,9 +55,13 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun saveDb(list: List<ProjectModelItem>, startTime: Long) {
+    private fun saveProjectDb(model: ProjectDataModel, startTime: Long) {
         viewModelScope.launch {
-            projectListRepo.deleteAll()
+            viewModelScope.async {
+                projectListRepo.deleteAll()
+            }.await()
+            Log.d(TAG, "saveProjectDb: Deleted all data")
+            val list = model.project_data
             val projectValue = projectListRepo.saveProjectList(list)
             list.forEach { projectModelItem ->
                 Log.e(TAG, "saveDb: projectModelItem ${projectModelItem.structureModel}")
@@ -80,11 +93,89 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
                 }
             }
             Log.e(TAG, "saveDb project: $projectValue")
+            saveObservationDataToDb(model.observation_data, startTime)
+
+        }
+    }
+
+    private fun saveObservationDataToDb(model: ObservationData, startTime: Long) {
+        viewModelScope.launch {
+            deleteAccountable()
+            deleteAllObservationCat()
+            deleteAllObservationSeverity()
+            deleteAllObservationType()
+            deleteAllTradeGroup()
+
+            if (model.accountables.isNotEmpty()) {
+                val value = observationListUseCase.saveAccountableList(model.accountables)
+                Log.e(TAG, "saveAccountableList: $value")
+            }
+            if (model.observation_severity.isNotEmpty()) {
+                val value =
+                    observationListUseCase.saveObservationSeverityList(model.observation_severity)
+                Log.e(TAG, "saveObservationSeverityList: $value")
+            }
+            if (model.observation_category.isNotEmpty()) {
+                val value =
+                    observationListUseCase.saveObservationCategoryList(model.observation_category)
+                Log.e(TAG, "saveObservationCategoryList: $value")
+            }
+            if (model.observation_type.isNotEmpty()) {
+                val value = observationListUseCase.saveObservationTypeList(model.observation_type)
+                Log.e(TAG, "observation_type: $value")
+            }
+            if (model.trade_group.isNotEmpty()) {
+                val value = observationListUseCase.saveTradeGroupList(model.trade_group)
+                Log.e(TAG, "trade_group: $value")
+            }
+            val list = model.trade_group
+            list.forEach { item ->
+                if (item.trades.isNotEmpty()) {
+                    val tradeModelValue =
+                        observationListUseCase.saveTradeModelList(item.trades)
+                    Log.e(TAG, "saveDb tradeModel: $tradeModelValue")
+                }
+            }
             Log.d(
                 TAG,
                 "liveDataObservers: showProgress :${System.currentTimeMillis() - startTime}"
             )
             _projectList.value = true
         }
+    }
+
+    private suspend fun deleteAccountable(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllAccountable()
+            Log.d(TAG, "deleteAccountable: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteAllObservationCat(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllObservationCat()
+            Log.d(TAG, "deleteAllObservationCat: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteAllObservationSeverity(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllObservationSeverity()
+            Log.d(TAG, "deleteAllObservationSeverity: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteAllObservationType(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllObservationType()
+            Log.d(TAG, "deleteAllObservationType: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteAllTradeGroup(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllTradeGroup()
+            Log.d(TAG, "deleteAllTradeGroup: value: $value")
+        }.await()
     }
 }

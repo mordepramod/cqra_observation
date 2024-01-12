@@ -2,6 +2,7 @@ package com.example.observationapp.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.observationapp.repository.database.ObservationDao
 import com.example.observationapp.repository.database.ProjectDao
 import com.example.observationapp.util.ApplicationDBTables
 import com.example.observationapp.util.ObservationDB
@@ -30,6 +31,12 @@ object DatabaseModule {
     @Singleton
     fun provideProjectDao(database: ObservationDB): ProjectDao {
         return database.projectDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideObservationDao(database: ObservationDB): ObservationDao {
+        return database.observationDao()
     }
 
     /* @Provides

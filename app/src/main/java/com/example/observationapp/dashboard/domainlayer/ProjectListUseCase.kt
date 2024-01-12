@@ -27,7 +27,7 @@ class ProjectListUseCase @Inject constructor() {
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun deleteAll() {
+    suspend fun deleteAll(): Int {
         return projectDBRepository.deleteAll()
     }
 

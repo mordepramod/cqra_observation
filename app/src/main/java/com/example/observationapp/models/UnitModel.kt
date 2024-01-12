@@ -19,7 +19,7 @@ import kotlinx.parcelize.Parcelize
     )]
 )
 data class UnitModel(
-    @PrimaryKey()
+    @PrimaryKey
     val unit_id: String,
     val stage_id: String,
     val unit_area: String,
@@ -31,6 +31,4 @@ data class UnitModel(
     override fun toString(): String {
         return unit_area
     }
-
-
 }

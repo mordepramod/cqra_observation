@@ -26,7 +26,7 @@ class ProjectDBRepository @Inject constructor(
     suspend fun saveSubUnitModelsList(list: List<SubUnitModel>): List<Long> =
         projectDao.saveSubUnitModelsList(list)
 
-    suspend fun deleteAll() = projectDao.deleteAll()
+    suspend fun deleteAll(): Int = projectDao.deleteAll()
 
     suspend fun getStructureList(projectId: String): List<StructureModel> {
         return projectDao.getStructureListOnProjectId(projectId)

@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.observationapp.LoginViewModel
+import com.example.observationapp.dashboard.presentationlayer.ui.activity.DashboardActivity
 import com.example.observationapp.databinding.ActivityLoginBinding
+import com.example.observationapp.util.Utility.launchActivity
 import com.example.observationapp.util.showShortToast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,8 +27,8 @@ class LoginActivity : AppCompatActivity() {
     private fun clickListeners() {
 
         binding.btnLogin.setOnClickListener {
-            login()
-            //launchActivity<DashboardActivity>()
+            //login()
+            launchActivity<DashboardActivity>()
         }
 
     }

@@ -1,0 +1,25 @@
+package com.example.observationapp.models
+
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import com.example.observationapp.util.ApplicationDBTables
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+@Entity(
+    tableName = ApplicationDBTables.TABLE_TRADE_MODEL,
+    foreignKeys = [ForeignKey(
+        entity = TradeGroupModel::class,
+        parentColumns = arrayOf("tradegroup_id"),
+        childColumns = arrayOf("tradegroup_id"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class TradeModel(
+    @PrimaryKey
+    val trade_id: String,
+    val trade_name: String,
+    val tradegroup_id: String
+) : Parcelable
