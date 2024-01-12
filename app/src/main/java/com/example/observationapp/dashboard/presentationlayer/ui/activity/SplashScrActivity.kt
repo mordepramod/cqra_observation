@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
-import com.example.observationapp.LoginActivity
 import com.example.observationapp.dashboard.domainlayer.SplashViewModel
+import com.example.observationapp.login.presentation.ui.activity.LoginActivity
 import com.example.observationapp.util.Utility.launchActivity
 
 class SplashScrActivity : AppCompatActivity() {

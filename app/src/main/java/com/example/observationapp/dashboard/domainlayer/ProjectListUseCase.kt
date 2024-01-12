@@ -52,6 +52,6 @@ class ProjectListUseCase @Inject constructor() {
     }
 
     companion object {
-        const val TAG = "GdprUseCase"
+        const val TAG = "ProjectListUseCase"
     }
 }
