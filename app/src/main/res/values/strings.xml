@@ -9,6 +9,7 @@
     <string name="stage_floor">Stage/Floor</string>
     <string name="trade_group">Trade Group</string>
     <string name="activity">Activity</string>
+    <string name="activity_trade">Activity/Trade</string>
     <string name="new_observation">New Observation</string>
     <string name="history">History</string>
     <string name="goodwork">Good Work</string>

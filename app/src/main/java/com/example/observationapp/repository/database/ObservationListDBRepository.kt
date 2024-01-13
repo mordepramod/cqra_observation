@@ -1,5 +1,6 @@
 package com.example.observationapp.repository.database
 
+import androidx.lifecycle.LiveData
 import com.example.observationapp.models.Accountable
 import com.example.observationapp.models.ObservationCategory
 import com.example.observationapp.models.ObservationSeverity
@@ -28,6 +29,19 @@ class ObservationListDBRepository @Inject constructor(
 
     suspend fun saveAccountableList(list: List<Accountable>): List<Long> =
         observationDao.insertAccountableList(list)
+
+    fun getTradeGroupList(): LiveData<List<TradeGroupModel>> = observationDao.getTradeGroupList()
+
+    fun getObservationTypeList(): LiveData<List<ObservationType>> =
+        observationDao.getObservationTypeList()
+
+    fun getObservationSeverityList(): LiveData<List<ObservationSeverity>> =
+        observationDao.getObservationSeverityList()
+
+    fun getAccountableList(): LiveData<List<Accountable>> = observationDao.getAccountableList()
+
+    suspend fun getTradeModelList(tradeGroupId: String): List<TradeModel> =
+        observationDao.getTradeModelList(tradeGroupId)
 
     suspend fun deleteAllAccountable(): Int = observationDao.deleteAllAccountable()
 

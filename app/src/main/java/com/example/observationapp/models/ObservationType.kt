@@ -11,6 +11,6 @@ data class ObservationType(
     val type_name: String
 ) {
     override fun toString(): String {
-        return "ObservationType(type_id='$type_id', type_name='$type_name')"
+        return type_name
     }
 }

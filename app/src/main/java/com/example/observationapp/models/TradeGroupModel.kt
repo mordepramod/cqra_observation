@@ -16,6 +16,6 @@ data class TradeGroupModel(
     @SerializedName("trades")
     val trades: List<TradeModel> = listOf()
     override fun toString(): String {
-        return "TradeGroup(tradegroup_id='$tradegroup_id', tradegroup_name='$tradegroup_name',trades: $trades)"
+        return tradegroup_name
     }
 }

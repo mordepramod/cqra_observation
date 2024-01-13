@@ -12,6 +12,6 @@ data class Accountable(
     val user_id: String
 ) {
     override fun toString(): String {
-        return "Accountable(first_name='$first_name', last_name='$last_name', user_id='$user_id')"
+        return "$first_name $last_name"
     }
 }

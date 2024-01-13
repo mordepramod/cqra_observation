@@ -22,4 +22,8 @@ data class TradeModel(
     val trade_id: String,
     val trade_name: String,
     val tradegroup_id: String
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return trade_name
+    }
+}
