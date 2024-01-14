@@ -50,6 +50,6 @@ class DashboardCardRecyclerAdapter :
     fun setData(it: List<Module>) {
         list.clear()
         list.addAll(it)
-        notifyItemRangeInserted(0, list.size)
+        notifyItemRangeChanged(0, list.size)
     }
 }

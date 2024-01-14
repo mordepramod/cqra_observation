@@ -114,7 +114,9 @@ class DashboardFragment : Fragment() {
                             viewModel.deleteDataStore()
                             viewModel.deleteLoginRelatedData()
                         }
-                        requireContext().launchActivity<SplashScrActivity>()
+                        requireContext().launchActivity<SplashScrActivity> {
+                            requireActivity().finish()
+                        }
                         true
                     }
 
@@ -136,6 +138,7 @@ class DashboardFragment : Fragment() {
         }
 
         lifecycleScope.launch {
+            Log.e(TAG, "loadProjectData: moduleList")
             viewModel.moduleList()
         }
     }
@@ -158,6 +161,7 @@ class DashboardFragment : Fragment() {
 
         viewModel.modelList.observe(viewLifecycleOwner) {
             it?.let {
+                Log.e(TAG, "liveDataObservers: modelList: $it")
                 moduleList = it
                 adapter.setData(it)
             }
