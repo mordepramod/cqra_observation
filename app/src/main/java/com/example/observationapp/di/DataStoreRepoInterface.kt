@@ -11,7 +11,7 @@ interface DataStoreRepoInterface {
 
     suspend fun getString(key: String): String?
 
-    suspend fun getBoolean(key: String): Boolean?
+    suspend fun getBoolean(key: String): Boolean
 
     suspend fun getInt(key: String): Int?
 

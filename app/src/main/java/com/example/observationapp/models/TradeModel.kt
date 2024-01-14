@@ -1,6 +1,7 @@
 package com.example.observationapp.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -21,6 +22,7 @@ data class TradeModel(
     @PrimaryKey
     val trade_id: String,
     val trade_name: String,
+    @ColumnInfo(name = "tradegroup_id", index = true)
     val tradegroup_id: String
 ) : Parcelable {
     override fun toString(): String {

@@ -14,7 +14,8 @@ object ApplicationDBTables {
     const val TABLE_ACCOUNTABLE = "accountable_table"
     const val TABLE_OBSERVATION_CATEGORY = "observation_category_table"
     const val TABLE_OBSERVATION_SEVERITY = "observation_severity_table"
-
+    const val TABLE_MENU_MODULE = "menu_module_table"
+    const val TABLE_MENU_SUBMODULE = "menu_submodule_table"
     const val TABLE_USER = "user_table"
 
 }

@@ -9,5 +9,6 @@ object CommonConstant {
     //Datastore related constants
     const val DATASTORE_NAME = "OBSERVATION_APP_DATASTORE"
     const val GET_PROJECTS_API_CALLED = "GET_PROJECTS_API_CALLED"
+    const val USER_LOGGED_IN = "USER_LOGGED_IN"
 
 }

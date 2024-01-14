@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.ObservationData
 import com.example.observationapp.models.ProjectDataModel
+import com.example.observationapp.models.UserModel
+import com.example.observationapp.repository.database.LoginDBRepository
 import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant.GET_PROJECTS_API_CALLED
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +29,8 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     var apiSuccess: Boolean = false
     private var _projectList = MutableLiveData<Boolean>()
     val projectList: LiveData<Boolean> = _projectList
+    private var _userInfo = MutableLiveData<UserModel>()
+    val userInfo: LiveData<UserModel> = _userInfo
 
     @Inject
     lateinit var projectListRepo: ProjectListUseCase
@@ -36,10 +40,14 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var observationListUseCase: ObservationListUseCase
-    fun getProjectsList() {
+
+    @Inject
+    lateinit var loginDBRepository: LoginDBRepository
+    fun getProjectsList(userId: String) {
         val startTime = System.currentTimeMillis()
         viewModelScope.launch {
-            val res = projectListRepo.getProjectListFlow()
+
+            val res = projectListRepo.getProjectListFlow(userId)
             res.collect { it ->
 
                 when (it.status) {
@@ -191,9 +199,13 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun getProjectsApiCalled(): Boolean? {
+    fun getProjectsApiCalled(): Boolean {
         return runBlocking {
             dataStoreRepoInterface.getBoolean(GET_PROJECTS_API_CALLED)
         }
+    }
+
+    suspend fun getLoggedInUser() {
+        _userInfo.value = loginDBRepository.getLoggedInUser()
     }
 }

@@ -61,7 +61,6 @@
     <string name="description">Description</string>
     <string name="observation_type">Observation type</string>
     <string name="add_observation">Add Observation</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="loading_data">Loading Data…</string>
+    <string name="something_is_wrong">Something is wrong</string>
 </resources>

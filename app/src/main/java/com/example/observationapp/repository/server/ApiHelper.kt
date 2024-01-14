@@ -6,6 +6,6 @@ import com.google.gson.JsonObject
 import retrofit2.Response
 
 interface ApiHelper {
-    suspend fun getProjectListAPI(): Response<ProjectModel>
+    suspend fun getProjectListAPI(userId: String): Response<ProjectModel>
     suspend fun getLoginAPI(jsonObject: JsonObject): Response<LoginResponseModel>
 }

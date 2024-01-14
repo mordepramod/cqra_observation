@@ -1,6 +1,7 @@
 package com.example.observationapp.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -21,5 +22,6 @@ data class SubUnitModel(
     @PrimaryKey
     val subunit_id: String,
     val subunit_name: String,
+    @ColumnInfo(name = "unit_id", index = true)
     val unit_id: String
 ) : Parcelable

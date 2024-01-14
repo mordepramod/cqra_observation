@@ -45,12 +45,12 @@ class DatastoreRepoImpl @Inject constructor(
         }
     }
 
-    override suspend fun getBoolean(key: String): Boolean? {
+    override suspend fun getBoolean(key: String): Boolean {
         return try {
             val preferences = context.dataStore.data.first()
-            preferences[getBooleanPrefKey(key)]
+            preferences[getBooleanPrefKey(key)] == true
         } catch (e: Exception) {
-            null
+            false
         }
     }
 

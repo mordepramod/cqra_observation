@@ -1,6 +1,7 @@
 package com.example.observationapp.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
@@ -21,6 +22,7 @@ import kotlinx.parcelize.Parcelize
 data class UnitModel(
     @PrimaryKey
     val unit_id: String,
+    @ColumnInfo(name = "stage_id", index = true)
     val stage_id: String,
     val unit_area: String,
     val unit_code: String,

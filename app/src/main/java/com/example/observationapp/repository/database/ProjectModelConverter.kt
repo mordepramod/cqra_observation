@@ -2,15 +2,18 @@ package com.example.observationapp.repository.database
 
 import androidx.room.TypeConverter
 import com.example.observationapp.models.Accountable
+import com.example.observationapp.models.Module
 import com.example.observationapp.models.ObservationCategory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.StageModel
 import com.example.observationapp.models.StructureModel
 import com.example.observationapp.models.SubUnitModel
+import com.example.observationapp.models.Submodule
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
 import com.example.observationapp.models.UnitModel
+import com.example.observationapp.models.UserModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -147,6 +150,43 @@ class ProjectModelConverter {
     @TypeConverter
     fun fromTradeModelList(value: List<TradeModel>): String {
         val listType = object : TypeToken<List<TradeModel>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
+
+    @TypeConverter
+    fun toUserModel(value: String): List<UserModel>? {
+        val listType = object : TypeToken<List<UserModel>>() {}.type
+        return Gson().fromJson<List<UserModel>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromUserModel(value: List<UserModel>): String {
+        val listType = object : TypeToken<List<UserModel>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
+    @TypeConverter
+    fun toMenuModule(value: String): List<Module>? {
+        val listType = object : TypeToken<List<Module>>() {}.type
+        return Gson().fromJson<List<Module>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromMenuModule(value: List<Module>): String {
+        val listType = object : TypeToken<List<Module>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
+    @TypeConverter
+    fun toMenuSubModule(value: String): List<Submodule>? {
+        val listType = object : TypeToken<List<Submodule>>() {}.type
+        return Gson().fromJson<List<Submodule>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromMenuSubModule(value: List<Submodule>): String {
+        val listType = object : TypeToken<List<Submodule>>() {}.type
         return Gson().toJson(value, listType)
     }
 

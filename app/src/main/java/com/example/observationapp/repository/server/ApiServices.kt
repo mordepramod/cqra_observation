@@ -11,7 +11,7 @@ import retrofit2.http.Path
 
 interface ApiServices {
     @GET("TEST/epr/index.php/api/getProjects/{userId}")
-    suspend fun getProjectListAPI(@Path("userId") page: Int): Response<ProjectModel>
+    suspend fun getProjectListAPI(@Path("userId") userId: String): Response<ProjectModel>
 
     @POST("TEST/epr/index.php/api/login")
     suspend fun getLoginAPI(@Body json: JsonObject): Response<LoginResponseModel>

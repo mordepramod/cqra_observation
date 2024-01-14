@@ -14,9 +14,9 @@ class ProjectListRepo @Inject constructor() {
 
     @Inject
     lateinit var apiService: ApiHelper
-    suspend fun getProjectListAPI(): APIResult<ProjectModel> {
+    suspend fun getProjectListAPI(userId: String): APIResult<ProjectModel> {
         return try {
-            val projectModelResponse = apiService.getProjectListAPI()
+            val projectModelResponse = apiService.getProjectListAPI(userId)
             if (projectModelResponse.isSuccessful && projectModelResponse.code() == HttpURLConnection.HTTP_OK) {
                 APIResult.success(projectModelResponse.body()!!)
             } else {

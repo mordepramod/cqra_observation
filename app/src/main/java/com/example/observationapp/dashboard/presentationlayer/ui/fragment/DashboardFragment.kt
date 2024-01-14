@@ -74,17 +74,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadProjectData() {
-        val value = viewModel.getProjectsApiCalled() ?: false
+        val value = viewModel.getProjectsApiCalled()
         Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}, value: $value")
 
-        if (!value && !viewModel.apiSuccess)
-            viewModel.getProjectsList()
-        else
-            hideProgress()
+        if (!value && !viewModel.apiSuccess) {
+            lifecycleScope.launch {
+                showProgress()
+                viewModel.getLoggedInUser()
+            }
+        }
     }
 
     private fun liveDataObservers() {
-        showProgress()
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e(TAG, "liveDataObservers: $it")
@@ -92,6 +93,12 @@ class DashboardFragment : Fragment() {
                 viewModel.putProjectsApiCalled(true)
             }
 
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            it?.let {
+                viewModel.getProjectsList(it.user_id)
+            }
         }
 
     }
