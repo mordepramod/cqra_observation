@@ -63,4 +63,7 @@
     <string name="add_observation">Add Observation</string>
     <string name="loading_data">Loading Data…</string>
     <string name="something_is_wrong">Something is wrong</string>
+    <string name="logout">Logout</string>
+    <string name="refresh_project_data">Refresh project data</string>
+    <string name="feature_is_coming_soon">Feature is coming soon…</string>
 </resources>

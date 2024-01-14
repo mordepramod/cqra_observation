@@ -5,13 +5,19 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,12 +27,15 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.observationapp.R
 import com.example.observationapp.dashboard.datalayer.ICardViewClickListener
 import com.example.observationapp.dashboard.domainlayer.DashboardViewModel
+import com.example.observationapp.dashboard.presentationlayer.ui.activity.SplashScrActivity
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.DashboardCardRecyclerAdapter
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.ImageSlideAdapter
 import com.example.observationapp.databinding.FragmentDashboardBinding
 import com.example.observationapp.models.Module
 import com.example.observationapp.util.ItemOffsetDecoration
+import com.example.observationapp.util.Utility.launchActivity
 import com.example.observationapp.util.gone
+import com.example.observationapp.util.showShortToast
 import com.example.observationapp.util.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -78,6 +87,41 @@ class DashboardFragment : Fragment() {
         adapterClickListener()
         liveDataObservers()
         loadProjectData()
+        menuOptionImplementation()
+    }
+
+    private fun menuOptionImplementation() {
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+                menuInflater.inflate(R.menu.dashboard_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.refresh_project_data -> {
+                        requireContext().showShortToast(getString(R.string.feature_is_coming_soon))
+                        true
+                    }
+
+                    R.id.logout -> {
+                        showProgress()
+                        lifecycleScope.launch {
+                            viewModel.deleteAllTablesData()
+                            viewModel.deleteDataStore()
+                            viewModel.deleteLoginRelatedData()
+                        }
+                        requireContext().launchActivity<SplashScrActivity>()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun loadProjectData() {

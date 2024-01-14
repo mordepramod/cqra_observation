@@ -10,9 +10,11 @@ import com.example.observationapp.models.Module
 import com.example.observationapp.models.ObservationData
 import com.example.observationapp.models.ProjectDataModel
 import com.example.observationapp.models.UserModel
+import com.example.observationapp.repository.database.DatastoreRepoImpl
 import com.example.observationapp.repository.database.LoginDBRepository
 import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant.GET_PROJECTS_API_CALLED
+import com.example.observationapp.util.CommonConstant.USER_LOGGED_IN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -76,9 +78,7 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     private fun saveProjectDb(model: ProjectDataModel, startTime: Long) {
         viewModelScope.launch {
-            viewModelScope.async {
-                projectListRepo.deleteAll()
-            }.await()
+            deleteAllTablesData()
             Log.d(TAG, "saveProjectDb: Deleted all data")
             val list = model.project_data
             val projectValue = projectListRepo.saveProjectList(list)
@@ -117,13 +117,42 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun saveObservationDataToDb(model: ObservationData, startTime: Long) {
-        viewModelScope.launch {
+    suspend fun deleteAllTablesData() {
+        viewModelScope.async {
+            projectListRepo.deleteAll()
             deleteAccountable()
             deleteAllObservationCat()
             deleteAllObservationSeverity()
             deleteAllObservationType()
             deleteAllTradeGroup()
+        }.await()
+
+    }
+
+    suspend fun deleteLoginRelatedData() {
+        viewModelScope.async {
+            deleteMenuModule()
+            deleteMenuSubModule()
+            deleteUserInfo()
+        }.await()
+
+    }
+
+    fun deleteDataStore() {
+        viewModelScope.launch {
+            dataStoreRepoInterface.clearSharedPref(
+                DatastoreRepoImpl.PreferenceType.BOOLEAN_PREF,
+                GET_PROJECTS_API_CALLED
+            )
+            dataStoreRepoInterface.clearSharedPref(
+                DatastoreRepoImpl.PreferenceType.BOOLEAN_PREF,
+                USER_LOGGED_IN
+            )
+        }
+    }
+
+    private fun saveObservationDataToDb(model: ObservationData, startTime: Long) {
+        viewModelScope.launch {
 
             if (model.accountables.isNotEmpty()) {
                 val value = observationListUseCase.saveAccountableList(model.accountables)
@@ -195,6 +224,27 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         return viewModelScope.async(Dispatchers.IO) {
             val value = observationListUseCase.deleteAllTradeGroup()
             Log.d(TAG, "deleteAllTradeGroup: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteMenuModule(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = loginDBRepository.deleteMenuModule()
+            Log.d(TAG, "deleteMenuModule: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteMenuSubModule(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = loginDBRepository.deleteAllMenuSubModuleList()
+            Log.d(TAG, "deleteMenuSubModule: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteUserInfo(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = loginDBRepository.deleteLoggedInUser()
+            Log.d(TAG, "deleteUserInfo: value: $value")
         }.await()
     }
 
