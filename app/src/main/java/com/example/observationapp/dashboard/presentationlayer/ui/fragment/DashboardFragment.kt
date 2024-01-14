@@ -24,6 +24,7 @@ import com.example.observationapp.dashboard.domainlayer.DashboardViewModel
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.DashboardCardRecyclerAdapter
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.ImageSlideAdapter
 import com.example.observationapp.databinding.FragmentDashboardBinding
+import com.example.observationapp.models.Module
 import com.example.observationapp.util.ItemOffsetDecoration
 import com.example.observationapp.util.gone
 import com.example.observationapp.util.visible
@@ -39,6 +40,8 @@ class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var handler: Handler
     private lateinit var adapter: DashboardCardRecyclerAdapter
+
+    private var moduleList: List<Module> = arrayListOf()
 
     companion object {
         private const val TAG = "DashboardFragment"
@@ -57,6 +60,11 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)
@@ -70,7 +78,6 @@ class DashboardFragment : Fragment() {
         adapterClickListener()
         liveDataObservers()
         loadProjectData()
-        return binding.root
     }
 
     private fun loadProjectData() {
@@ -82,6 +89,10 @@ class DashboardFragment : Fragment() {
                 showProgress()
                 viewModel.getLoggedInUser()
             }
+        }
+
+        lifecycleScope.launch {
+            viewModel.moduleList()
         }
     }
 
@@ -101,6 +112,14 @@ class DashboardFragment : Fragment() {
             }
         }
 
+        viewModel.modelList.observe(viewLifecycleOwner) {
+            it?.let {
+                moduleList = it
+                adapter.setData(it)
+            }
+
+        }
+
     }
 
     private fun showProgress() {
@@ -115,9 +134,10 @@ class DashboardFragment : Fragment() {
     private fun adapterClickListener() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
-                findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
+                if (moduleList[position].module_id == "6") {
+                    findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
                 }
-
+            }
         })
     }
 

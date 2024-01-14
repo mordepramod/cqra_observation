@@ -27,7 +27,7 @@ class LoginDBRepository @Inject constructor(
         return loginDao.getLoginUserInfo()
     }
 
-    fun getModuleData(): LiveData<Module> {
+    suspend fun getModuleData(): List<Module> {
         return loginDao.getModuleData()
     }
 

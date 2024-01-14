@@ -28,7 +28,7 @@ interface LoginDao {
 
     /*******************    Get Data from DB Starts     ********************/
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_MENU_MODULE}")
-    fun getModuleData(): LiveData<Module>
+    suspend fun getModuleData(): List<Module>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_USER}")
     suspend fun getLoginUserInfo(): UserModel

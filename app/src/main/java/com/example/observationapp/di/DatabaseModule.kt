@@ -45,7 +45,4 @@ object DatabaseModule {
     fun provideLoginDao(database: ObservationDB): LoginDao {
         return database.loginDao()
     }
-
-    /* @Provides
-     fun provideEntity() = ProjectModelItem()*/
 }

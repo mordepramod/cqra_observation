@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
+import com.example.observationapp.models.Module
 import com.example.observationapp.models.ObservationData
 import com.example.observationapp.models.ProjectDataModel
 import com.example.observationapp.models.UserModel
@@ -29,8 +30,12 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     var apiSuccess: Boolean = false
     private var _projectList = MutableLiveData<Boolean>()
     val projectList: LiveData<Boolean> = _projectList
+
     private var _userInfo = MutableLiveData<UserModel>()
     val userInfo: LiveData<UserModel> = _userInfo
+
+    private var _modelList = MutableLiveData<List<Module>>()
+    val modelList: LiveData<List<Module>> = _modelList
 
     @Inject
     lateinit var projectListRepo: ProjectListUseCase
@@ -207,5 +212,9 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     suspend fun getLoggedInUser() {
         _userInfo.value = loginDBRepository.getLoggedInUser()
+    }
+
+    suspend fun moduleList() {
+        _modelList.value = loginDBRepository.getModuleData()
     }
 }

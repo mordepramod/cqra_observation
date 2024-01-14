@@ -39,6 +39,14 @@ class LoginUseCase @Inject constructor() {
         return loginDBRepository.saveMenuSubModuleList(submodules)
     }
 
+    suspend fun getLoggedInUser(): UserModel {
+        return loginDBRepository.getLoggedInUser()
+    }
+
+    suspend fun moduleList(): List<Module> {
+        return loginDBRepository.getModuleData()
+    }
+
     companion object {
         const val TAG = "LoginUseCase"
     }
