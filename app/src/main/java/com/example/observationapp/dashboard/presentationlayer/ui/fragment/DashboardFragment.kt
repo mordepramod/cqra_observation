@@ -74,9 +74,13 @@ class DashboardFragment : Fragment() {
     }
 
     private fun loadProjectData() {
-        Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}")
-        if (!viewModel.apiSuccess)
+        val value = viewModel.getProjectsApiCalled() ?: false
+        Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}, value: $value")
+
+        if (!value && !viewModel.apiSuccess)
             viewModel.getProjectsList()
+        else
+            hideProgress()
     }
 
     private fun liveDataObservers() {
@@ -85,6 +89,7 @@ class DashboardFragment : Fragment() {
             it?.let {
                 Log.e(TAG, "liveDataObservers: $it")
                 hideProgress()
+                viewModel.putProjectsApiCalled(true)
             }
 
         }

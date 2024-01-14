@@ -5,13 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.ObservationData
 import com.example.observationapp.models.ProjectDataModel
 import com.example.observationapp.util.APIResult
+import com.example.observationapp.util.CommonConstant.GET_PROJECTS_API_CALLED
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +30,9 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var projectListRepo: ProjectListUseCase
+
+    @Inject
+    lateinit var dataStoreRepoInterface: DataStoreRepoInterface
 
     @Inject
     lateinit var observationListUseCase: ObservationListUseCase
@@ -177,5 +183,17 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
             val value = observationListUseCase.deleteAllTradeGroup()
             Log.d(TAG, "deleteAllTradeGroup: value: $value")
         }.await()
+    }
+
+    fun putProjectsApiCalled(isSuccess: Boolean) {
+        viewModelScope.launch {
+            dataStoreRepoInterface.putBoolean(GET_PROJECTS_API_CALLED, isSuccess)
+        }
+    }
+
+    fun getProjectsApiCalled(): Boolean? {
+        return runBlocking {
+            dataStoreRepoInterface.getBoolean(GET_PROJECTS_API_CALLED)
+        }
     }
 }

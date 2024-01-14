@@ -1,5 +1,7 @@
 package com.example.observationapp.di
 
+import android.content.Context
+import com.example.observationapp.repository.database.DatastoreRepoImpl
 import com.example.observationapp.repository.server.ApiHelper
 import com.example.observationapp.repository.server.ApiRepository
 import com.example.observationapp.repository.server.ApiServices
@@ -10,6 +12,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -74,5 +77,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideApiHelper(apiHelper: ApiRepository): ApiHelper = apiHelper
+
+    @Singleton
+    @Provides
+    fun provideDataStoreRepo(
+        @ApplicationContext context: Context
+    ): DataStoreRepoInterface = DatastoreRepoImpl(context)
 
 }
