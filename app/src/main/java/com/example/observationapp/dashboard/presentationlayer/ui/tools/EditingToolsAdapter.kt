@@ -1,24 +1,18 @@
 package com.example.observationapp.dashboard.presentationlayer.ui.tools
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.observationapp.R
 import com.example.observationapp.dashboard.presentationlayer.ui.listeners.OnItemSelected
+import com.example.observationapp.databinding.RowEditingToolsBinding
 
 class EditingToolsAdapter() : RecyclerView.Adapter<EditingToolsAdapter.ViewHolder>() {
 
     private val mToolList = mutableListOf<ToolModel>()
     private lateinit var mOnItemSelected: OnItemSelected
 
-
-    constructor(onItemSelected: OnItemSelected?) : this() {
-        if (onItemSelected != null) {
-            mOnItemSelected = onItemSelected
-        }
+    init {
         mToolList.addAll(
             listOf(
                 ToolModel("Save", R.drawable.ic_save, ToolType.SAVE),
@@ -31,41 +25,42 @@ class EditingToolsAdapter() : RecyclerView.Adapter<EditingToolsAdapter.ViewHolde
         )
     }
 
+    fun setInterface(onItemSelected: OnItemSelected?) {
+        if (onItemSelected != null) {
+            mOnItemSelected = onItemSelected
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): EditingToolsAdapter.ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.row_editing_tools, parent, false)
-        return ViewHolder(view)
+    ): ViewHolder {
+        val binind =
+            RowEditingToolsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binind)
     }
 
-    override fun onBindViewHolder(holder: EditingToolsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mToolList[position]
-        holder.txtTool?.setTextSize(if (item.mToolName == "Save") 20f else 12f) // Concise textSize assignment
-        holder.txtTool?.text = item.mToolName
-        holder.imgToolIcon?.setImageResource(item.mToolIcon)
+        holder.bind(item)
+        holder.binding.root.setOnClickListener {
+            mOnItemSelected.onToolSelected(mToolList[position].mToolType)
+        }
     }
 
     override fun getItemCount(): Int = mToolList.size
     inner class ToolModel(
         val mToolName: String,
         val mToolIcon: Int,
-        private val mToolType: ToolType
+        val mToolType: ToolType
     )
 
-    class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        val colorPickerView: Any
-            get() {
-                TODO()
-            }
-        val imgToolIcon = itemView?.findViewById<ImageView>(R.id.imgToolIcon)
-        val txtTool = itemView?.findViewById<TextView>(R.id.txtTool)
-
-        init {
-            itemView?.setOnClickListener {
-                mOnItemSelected.onToolSelected(mToolList.get(layoutPosition).mToolType)
-            }
+    class ViewHolder(val binding: RowEditingToolsBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: ToolModel) {
+            binding.txtTool.textSize =
+                if (item.mToolName == "Save") 20f else 12f // Concise textSize assignment
+            binding.txtTool.text = item.mToolName
+            binding.imgToolIcon.setImageResource(item.mToolIcon)
         }
     }
 }

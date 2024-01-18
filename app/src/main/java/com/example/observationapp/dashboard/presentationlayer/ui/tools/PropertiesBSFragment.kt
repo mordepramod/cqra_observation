@@ -17,9 +17,6 @@ class PropertiesBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChang
 
     private var mProperties: Properties? = null
 
-    fun PropertiesBSFragment() {
-        // Required empty public constructor
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
