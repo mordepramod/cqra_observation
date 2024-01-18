@@ -33,11 +33,11 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     private var _projectList = MutableLiveData<Boolean>()
     val projectList: LiveData<Boolean> = _projectList
 
-    private var _userInfo = MutableLiveData<UserModel>()
-    val userInfo: LiveData<UserModel> = _userInfo
+    private var _userInfo = MutableLiveData<UserModel?>()
+    val userInfo: LiveData<UserModel?> = _userInfo
 
-    private var _modelList = MutableLiveData<List<Module>>()
-    val modelList: LiveData<List<Module>> = _modelList
+    private var _modelList = MutableLiveData<List<Module>?>()
+    val modelList: LiveData<List<Module>?> = _modelList
 
     @Inject
     lateinit var projectListRepo: ProjectListUseCase
@@ -266,5 +266,10 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     suspend fun moduleList() {
         _modelList.value = loginDBRepository.getModuleData()
+    }
+
+    fun resetLiveData() {
+        _modelList.value = null
+        _userInfo.value = null
     }
 }

@@ -78,16 +78,15 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     private fun saveLoginDataToBD(data: LoginResultModel) {
         viewModelScope.launch {
-            _loginUserInfo.value = loginUseCase.saveLoginUserInfo(data.user)
-        }
-        viewModelScope.launch {
             data.menus.forEach {
                 val menu = loginUseCase.saveMenuModule(it.module)
                 Log.d(TAG, "saveLoginDataToBD menu: $menu ")
                 val submenu = loginUseCase.saveMenuSubModule(it.submodules)
                 Log.d(TAG, "saveLoginDataToBD submenu: $submenu ")
             }
-
+            val user = loginUseCase.saveLoginUserInfo(data.user)
+            Log.d(TAG, "saveLoginDataToBD: userValue: $user")
+            _loginUserInfo.value = user
         }
     }
 

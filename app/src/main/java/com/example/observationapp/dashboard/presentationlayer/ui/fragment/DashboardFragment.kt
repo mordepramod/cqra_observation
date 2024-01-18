@@ -19,7 +19,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DashboardFragment : Fragment() {
 
+    private lateinit var navController: NavController
     private lateinit var imageList: ArrayList<Int>
     private var dots: Array<ImageView?> = arrayOfNulls(INITIAL_VALUE)
     private lateinit var binding: FragmentDashboardBinding
@@ -69,11 +71,14 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
+        Log.e(TAG, "onViewCreated: ")
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)
@@ -183,7 +188,8 @@ class DashboardFragment : Fragment() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 if (moduleList[position].module_id == "6") {
-                    findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
+                    viewModel.resetLiveData()
+                    navController.navigate(R.id.dashboardFragment_to_observationFragment)
                 }
             }
         })

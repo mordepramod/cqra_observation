@@ -30,7 +30,9 @@ class LoginActivity : AppCompatActivity() {
             it?.let {
                 if (it > 0) {
                     viewModel.saveUserLoggedIn(true)
-                    launchActivity<DashboardActivity>()
+                    launchActivity<DashboardActivity> {
+                        finish()
+                    }
                 } else {
                     showShortToast(getString(R.string.something_is_wrong))
                 }
