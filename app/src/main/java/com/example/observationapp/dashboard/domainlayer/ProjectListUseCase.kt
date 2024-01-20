@@ -20,14 +20,14 @@ class ProjectListUseCase @Inject constructor() {
 
     @Inject
     lateinit var projectDBRepository: ProjectDBRepository
-    fun getProjectListFlow(): Flow<APIResult<ProjectModel>> {
+    fun getProjectListFlow(userId: String): Flow<APIResult<ProjectModel>> {
         return flow {
-            val gdprResponse = projectListRepo.getProjectListAPI()
+            val gdprResponse = projectListRepo.getProjectListAPI(userId)
             emit(gdprResponse)
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun deleteAll() {
+    suspend fun deleteAll(): Int {
         return projectDBRepository.deleteAll()
     }
 
@@ -52,6 +52,6 @@ class ProjectListUseCase @Inject constructor() {
     }
 
     companion object {
-        const val TAG = "GdprUseCase"
+        const val TAG = "ProjectListUseCase"
     }
 }

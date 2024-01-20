@@ -15,9 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class
-
-DashboardActivity : AppCompatActivity() {
+class DashboardActivity : AppCompatActivity() {
 
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -30,6 +28,7 @@ DashboardActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.mToolbarDashboard)
         navController = findNavController(R.id.navHost)
+        //navController = (supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment).navController//findNavController(R.id.navHost)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
@@ -53,7 +52,6 @@ DashboardActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        //navController = findNavController(R.id.nav_host_fragment_content_main_on_boarding)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }

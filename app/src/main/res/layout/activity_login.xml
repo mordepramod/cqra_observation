@@ -7,15 +7,14 @@
     android:orientation="vertical"
     android:background="@drawable/login"
     android:gravity="center"
-    tools:context=".LoginActivity">
+    tools:context=".login.presentation.ui.activity.LoginActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/dimen_30dp"
         app:cardCornerRadius="@dimen/dimen_30dp"
-        app:cardElevation="@dimen/dimen_20dp"
-        >
+        app:cardElevation="@dimen/dimen_20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:drawableLeft="@drawable/person_24"
+                    android:drawableStart="@drawable/person_24"
                     tools:ignore="VisualLintTextFieldSize" />
 
             </com.google.android.material.textfield.TextInputLayout>

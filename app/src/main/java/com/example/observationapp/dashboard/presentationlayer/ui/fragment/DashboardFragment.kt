@@ -5,15 +5,22 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -21,11 +28,15 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.observationapp.R
 import com.example.observationapp.dashboard.datalayer.ICardViewClickListener
 import com.example.observationapp.dashboard.domainlayer.DashboardViewModel
+import com.example.observationapp.dashboard.presentationlayer.ui.activity.SplashScrActivity
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.DashboardCardRecyclerAdapter
 import com.example.observationapp.dashboard.presentationlayer.ui.adapters.ImageSlideAdapter
 import com.example.observationapp.databinding.FragmentDashboardBinding
+import com.example.observationapp.models.Module
 import com.example.observationapp.util.ItemOffsetDecoration
+import com.example.observationapp.util.Utility.launchActivity
 import com.example.observationapp.util.gone
+import com.example.observationapp.util.showShortToast
 import com.example.observationapp.util.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -34,11 +45,14 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DashboardFragment : Fragment() {
 
+    private lateinit var navController: NavController
     private lateinit var imageList: ArrayList<Int>
     private var dots: Array<ImageView?> = arrayOfNulls(INITIAL_VALUE)
     private lateinit var binding: FragmentDashboardBinding
     private lateinit var handler: Handler
     private lateinit var adapter: DashboardCardRecyclerAdapter
+
+    private var moduleList: List<Module> = arrayListOf()
 
     companion object {
         private const val TAG = "DashboardFragment"
@@ -50,14 +64,21 @@ class DashboardFragment : Fragment() {
         private const val MARGIN_PIX_VALUE = 40
     }
 
-    private lateinit var viewModel: DashboardViewModel
+    private val viewModel: DashboardViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
+        Log.e(TAG, "onViewCreated: ")
         binding.rvItems.layoutManager = GridLayoutManager(requireActivity(), SPAN_COUNT)
         val itemDecoration = ItemOffsetDecoration(requireContext(), R.dimen.item_offset)
         binding.rvItems.addItemDecoration(itemDecoration)
@@ -71,21 +92,83 @@ class DashboardFragment : Fragment() {
         adapterClickListener()
         liveDataObservers()
         loadProjectData()
-        return binding.root
+        menuOptionImplementation()
+    }
+
+    private fun menuOptionImplementation() {
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                // Add menu items here
+                menuInflater.inflate(R.menu.dashboard_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                // Handle the menu selection
+                return when (menuItem.itemId) {
+                    R.id.refresh_project_data -> {
+                        requireContext().showShortToast(getString(R.string.feature_is_coming_soon))
+                        true
+                    }
+
+                    R.id.logout -> {
+                        showProgress()
+                        lifecycleScope.launch {
+                            viewModel.deleteAllTablesData()
+                            viewModel.deleteDataStore()
+                            viewModel.deleteLoginRelatedData()
+                        }
+                        requireContext().launchActivity<SplashScrActivity> {
+                            requireActivity().finish()
+                        }
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun loadProjectData() {
-        Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}")
-        if (!viewModel.apiSuccess)
-            viewModel.getProjectsList()
+        val value = viewModel.getProjectsApiCalled()
+        Log.d(TAG, "loadProjectData: viewModel.apiSuccess: ${viewModel.apiSuccess}, value: $value")
+
+        if (!value && !viewModel.apiSuccess) {
+            lifecycleScope.launch {
+                showProgress()
+                viewModel.getLoggedInUser()
+            }
+        }
+
+        lifecycleScope.launch {
+            Log.e(TAG, "loadProjectData: moduleList")
+            viewModel.moduleList()
+        }
     }
 
     private fun liveDataObservers() {
-        showProgress()
         viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.e(TAG, "liveDataObservers: $it")
                 hideProgress()
+                viewModel.putProjectsApiCalled(true)
+            }
+
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            it?.let {
+                viewModel.getProjectsList(it.user_id)
+            }
+        }
+
+        viewModel.modelList.observe(viewLifecycleOwner) {
+            it?.let {
+                Log.e(TAG, "liveDataObservers: modelList: $it")
+                moduleList = it
+                adapter.setData(it)
             }
 
         }
@@ -104,9 +187,11 @@ class DashboardFragment : Fragment() {
     private fun adapterClickListener() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
-                findNavController().navigate(R.id.dashboardFragment_to_observationFragment)
+                if (moduleList[position].module_id == "6") {
+                    viewModel.resetLiveData()
+                    navController.navigate(R.id.dashboardFragment_to_observationFragment)
                 }
-
+            }
         })
     }
 

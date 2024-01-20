@@ -1,6 +1,7 @@
 package com.example.observationapp.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
@@ -25,6 +26,7 @@ data class StructureModel(
     val structure_id: String = "",
     /*val _id :Int = 0,*/
     val created_date: String = "",
+    @ColumnInfo(name = "project_id", index = true)
     val project_id: String = "",
     val structure_area: String = "",
     val structure_floors: String = "",

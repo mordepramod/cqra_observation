@@ -5,14 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.observationapp.dashboard.datalayer.ICardViewClickListener
 import com.example.observationapp.databinding.CardLayoutBinding
+import com.example.observationapp.models.Module
 
-class DashboardCardRecyclerAdapter() :
+class DashboardCardRecyclerAdapter :
     RecyclerView.Adapter<DashboardCardRecyclerAdapter.ItemViewHolder>() {
     private lateinit var listener: ICardViewClickListener
+    private var list = arrayListOf<Module>()
 
-    class ItemViewHolder(val itemV: CardLayoutBinding, val listener: ICardViewClickListener) :
+    class ItemViewHolder(
+        val itemV: CardLayoutBinding,
+        private val listener: ICardViewClickListener
+    ) :
         RecyclerView.ViewHolder(itemV.root) {
         fun bindData(position: Int) {
+
             itemV.root.setOnClickListener {
                 listener.onItemClick(position)
             }
@@ -33,12 +39,17 @@ class DashboardCardRecyclerAdapter() :
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return list.size
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bindData(position)
+        holder.itemV.tvCard.text = list[position].module_name
+    }
 
-
+    fun setData(it: List<Module>) {
+        list.clear()
+        list.addAll(it)
+        notifyItemRangeChanged(0, list.size)
     }
 }

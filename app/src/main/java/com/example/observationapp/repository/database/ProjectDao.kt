@@ -30,7 +30,7 @@ interface ProjectDao {
     suspend fun saveSubUnitModelsList(list: List<SubUnitModel>): List<Long>
 
     @Query("Delete from ${ApplicationDBTables.TABLE_PROJECT}")
-    suspend fun deleteAll()
+    suspend fun deleteAll(): Int
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_PROJECT}")
     fun getAllProjectList(): LiveData<List<ProjectModelItem>>

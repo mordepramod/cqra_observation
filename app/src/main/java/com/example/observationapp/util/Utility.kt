@@ -3,6 +3,7 @@ package com.example.observationapp.util
 import android.content.Context
 import android.content.Intent
 
+
 object Utility {
     inline fun <reified T : Any> Context.launchActivity(
         noinline bundle: Intent.() -> Unit = {}

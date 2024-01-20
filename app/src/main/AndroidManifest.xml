@@ -39,7 +39,7 @@
             android:name=".dashboard.presentationlayer.ui.activity.DashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.presentation.ui.activity.LoginActivity"
             android:exported="true" />
     </application>
 

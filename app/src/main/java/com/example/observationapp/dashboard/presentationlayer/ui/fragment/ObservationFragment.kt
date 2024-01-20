@@ -7,14 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.observationapp.dashboard.domainlayer.ObservationViewModel
 import com.example.observationapp.databinding.FragmentObservationBinding
+import com.example.observationapp.models.Accountable
+import com.example.observationapp.models.ObservationSeverity
+import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
 import com.example.observationapp.models.StageModel
 import com.example.observationapp.models.StructureModel
-import com.example.observationapp.models.UnitModel
+import com.example.observationapp.models.TradeGroupModel
+import com.example.observationapp.models.TradeModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -24,29 +28,38 @@ class ObservationFragment : Fragment() {
     private var projectId = ""
     private var structureId = ""
     private var stageOrFloorId = ""
-    private var unitId = ""
+    private var tradeGroupId = ""
+    private var tradeId = ""
+    private var observationTypeId = ""
+    private var observationSeverityId = ""
+    private var accountableId = ""
 
     companion object {
         private const val TAG = "ObservationFragment"
     }
 
-    private lateinit var viewModel: ObservationViewModel
+    private val viewModel: ObservationViewModel by viewModels()
     private var projectList = listOf<ProjectModelItem>()
     private var structureList = listOf<StructureModel>()
     private var stageOrFloorList = listOf<StageModel>()
-    private var unitList = listOf<UnitModel>()
+    private var tradeGroupModelList = listOf<TradeGroupModel>()
+    private var tradeModelList = listOf<TradeModel>()
+    private var observationTypeList = listOf<ObservationType>()
+    private var observationSeverityList = listOf<ObservationSeverity>()
+    private var accountableList = listOf<Accountable>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentObservationBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[ObservationViewModel::class.java]
-
-        liveDataObservers()
-
-        setProjectAdapterData()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        liveDataObservers()
+        setProjectAdapterData()
     }
 
     private fun liveDataObservers() {
@@ -93,15 +106,71 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.unitList.observe(viewLifecycleOwner) {
+            viewModel.getTradeGroupList().observe(viewLifecycleOwner) {
                 it?.let {
-                    unitList = it
-                    val unitModelArrayAdapter = ArrayAdapter(
+                    tradeGroupModelList = it
+                    val tradeGroupArrayAdapter = ArrayAdapter(
                         requireContext(),
                         androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                        unitList
+                        tradeGroupModelList
                     )
-                    binding.autoTradeGroupName.setAdapter(unitModelArrayAdapter)
+                    binding.autoTradeGroupName.setAdapter(tradeGroupArrayAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.tradeModelList.observe(viewLifecycleOwner) {
+                it?.let {
+                    tradeModelList = it
+                    val tradeModelAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        tradeModelList
+                    )
+                    binding.autoActivityName.setAdapter(tradeModelAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.getObservationTypeList().observe(viewLifecycleOwner) {
+                it?.let {
+                    observationTypeList = it
+                    val tradeGroupArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        observationTypeList
+                    )
+                    binding.autoObservationTypeName.setAdapter(tradeGroupArrayAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.getObservationSeverityList().observe(viewLifecycleOwner) {
+                it?.let {
+                    observationSeverityList = it
+                    val tradeGroupArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        observationSeverityList
+                    )
+                    binding.autoObsSeverityName.setAdapter(tradeGroupArrayAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.getAccountableList().observe(viewLifecycleOwner) {
+                it?.let {
+                    accountableList = it
+                    val tradeGroupArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        accountableList
+                    )
+                    binding.autoAccountableName.setAdapter(tradeGroupArrayAdapter)
                 }
             }
         }
@@ -128,13 +197,34 @@ class ObservationFragment : Fragment() {
         binding.autoStageOrFloorName.setOnItemClickListener { _, _, position, _ ->
             stageOrFloorId = stageOrFloorList[position].stage_id
             binding.autoTradeGroupName.setText("")
-            viewModel.getUnitList(stageOrFloorId)
             Log.d(TAG, "autoStageOrFloorName: $stageOrFloorId")
         }
 
         binding.autoTradeGroupName.setOnItemClickListener { _, _, position, _ ->
-            unitId = unitList[position].stage_id
-            Log.d(TAG, "autoTradeGroupName: $unitId")
+            tradeGroupId = tradeGroupModelList[position].tradegroup_id
+            binding.autoActivityName.setText("")
+            viewModel.getTradeModelList(tradeGroupId)
+            Log.d(TAG, "autoTradeGroupName: $tradeGroupId")
+        }
+
+        binding.autoActivityName.setOnItemClickListener { _, _, position, _ ->
+            tradeId = tradeModelList[position].trade_id
+            Log.d(TAG, "autoActivityTradeName: $tradeId")
+        }
+
+        binding.autoObservationTypeName.setOnItemClickListener { _, _, position, _ ->
+            observationTypeId = observationTypeList[position].type_id
+            Log.d(TAG, "autoObservationTypeName: $observationTypeId")
+        }
+
+        binding.autoObsSeverityName.setOnItemClickListener { _, _, position, _ ->
+            observationSeverityId = observationSeverityList[position].severity_id
+            Log.d(TAG, "autoObsSeverityName: $observationSeverityId")
+        }
+
+        binding.autoAccountableName.setOnItemClickListener { _, _, position, _ ->
+            accountableId = accountableList[position].user_id
+            Log.d(TAG, "autoAccountableName: $accountableId")
         }
 
     }

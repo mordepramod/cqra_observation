@@ -10,7 +10,6 @@ import com.google.gson.annotations.SerializedName
 data class ProjectModelItem(
     @PrimaryKey
     val project_id: String = "",
-    /*val _id: Int = 0,*/
     val address: String = "",
     val contact_number: String = "",
     val created_date: String = "",
