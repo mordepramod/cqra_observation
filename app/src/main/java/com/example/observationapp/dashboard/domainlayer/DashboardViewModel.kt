@@ -12,8 +12,11 @@ import com.example.observationapp.models.ProjectDataModel
 import com.example.observationapp.models.UserModel
 import com.example.observationapp.repository.database.DatastoreRepoImpl
 import com.example.observationapp.repository.database.LoginDBRepository
+import com.example.observationapp.repository.database.ObservationHistoryDBRepository
 import com.example.observationapp.util.APIResult
+import com.example.observationapp.util.CommonConstant.GET_OBSERVATION_HISTORY_API_CALLED
 import com.example.observationapp.util.CommonConstant.GET_PROJECTS_API_CALLED
+import com.example.observationapp.util.CommonConstant.USER_ID
 import com.example.observationapp.util.CommonConstant.USER_LOGGED_IN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +50,9 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var observationListUseCase: ObservationListUseCase
+
+    @Inject
+    lateinit var observationHistoryDBRepository: ObservationHistoryDBRepository
 
     @Inject
     lateinit var loginDBRepository: LoginDBRepository
@@ -125,12 +131,22 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
             deleteAllObservationSeverity()
             deleteAllObservationType()
             deleteAllTradeGroup()
+            deleteAllObservationHistory()
         }.await()
 
     }
 
-    suspend fun deleteLoginRelatedData() {
-        viewModelScope.async {
+    private suspend fun deleteAllObservationHistory(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationHistoryDBRepository.deleteAllObservationHistory()
+            Log.d(TAG, "deleteAllObservationHistory: value: $value")
+        }.await()
+
+
+    }
+
+    suspend fun deleteLoginRelatedData(): Int {
+        return viewModelScope.async {
             deleteMenuModule()
             deleteMenuSubModule()
             deleteUserInfo()
@@ -147,6 +163,14 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
             dataStoreRepoInterface.clearSharedPref(
                 DatastoreRepoImpl.PreferenceType.BOOLEAN_PREF,
                 USER_LOGGED_IN
+            )
+            dataStoreRepoInterface.clearSharedPref(
+                DatastoreRepoImpl.PreferenceType.STRING_PREF,
+                USER_ID
+            )
+            dataStoreRepoInterface.clearSharedPref(
+                DatastoreRepoImpl.PreferenceType.BOOLEAN_PREF,
+                GET_OBSERVATION_HISTORY_API_CALLED
             )
         }
     }

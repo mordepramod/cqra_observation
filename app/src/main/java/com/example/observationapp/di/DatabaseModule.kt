@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.example.observationapp.repository.database.LoginDao
 import com.example.observationapp.repository.database.ObservationDao
+import com.example.observationapp.repository.database.ObservationHistoryDao
 import com.example.observationapp.repository.database.ProjectDao
 import com.example.observationapp.util.ApplicationDBTables
 import com.example.observationapp.util.ObservationDB
@@ -44,5 +45,11 @@ object DatabaseModule {
     @Singleton
     fun provideLoginDao(database: ObservationDB): LoginDao {
         return database.loginDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideObservationHistoryDao(database: ObservationDB): ObservationHistoryDao {
+        return database.observationHistoryDao()
     }
 }

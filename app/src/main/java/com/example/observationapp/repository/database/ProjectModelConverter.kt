@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.example.observationapp.models.Accountable
 import com.example.observationapp.models.Module
 import com.example.observationapp.models.ObservationCategory
+import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.StageModel
@@ -187,6 +188,30 @@ class ProjectModelConverter {
     @TypeConverter
     fun fromMenuSubModule(value: List<Submodule>): String {
         val listType = object : TypeToken<List<Submodule>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
+    @TypeConverter
+    fun toObservationHistory(value: String): List<ObservationHistory>? {
+        val listType = object : TypeToken<List<ObservationHistory>>() {}.type
+        return Gson().fromJson<List<ObservationHistory>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromObservationHistory(value: List<ObservationHistory>): String {
+        val listType = object : TypeToken<List<ObservationHistory>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
+    @TypeConverter
+    fun toFloorList(value: String): List<Int>? {
+        val listType = object : TypeToken<List<Int>>() {}.type
+        return Gson().fromJson<List<Int>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromFloorList(value: List<Int>): String {
+        val listType = object : TypeToken<List<Int>>() {}.type
         return Gson().toJson(value, listType)
     }
 

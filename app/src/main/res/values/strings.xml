@@ -66,4 +66,7 @@
     <string name="logout">Logout</string>
     <string name="refresh_project_data">Refresh project data</string>
     <string name="feature_is_coming_soon">Feature is coming soon…</string>
+    <string name="no_data_available">No Data available</string>
+    <string name="observation_history">Observation History</string>
+    <string name="observation">Observation</string>
 </resources>

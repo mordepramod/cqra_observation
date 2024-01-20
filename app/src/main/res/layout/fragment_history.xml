@@ -1,320 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".FragmentHistory">
+    tools:context=".observation.observation_history.presentation.ui.FragmentHistory">
+
+    <TextView
+        android:id="@+id/tvNoDataAvailable"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_data_available"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvObservationHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/observation_history_item" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddObservation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_20dp"
+        android:contentDescription="@string/add_observation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/circle_add_icon"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <include
+        android:id="@+id/llProgress"
+        layout="@layout/circular_progress_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/HistoryToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_theme_primaryContainer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/txtToolbarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/dimen_4dp"
-                android:text="@string/history"
-                android:textStyle="bold" />
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/questionCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            tools:ignore="MissingConstraints"
-          >
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/tvQuestionName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10dp"
-                    android:text="@string/cement_Store_is_dryandleakproof"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:text="@string/view"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvQuestionName"
-                    app:layout_constraintVertical_bias="1.0" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            tools:ignore="MissingConstraints"
-           >
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/txtview10"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10dp"
-                    android:text="@string/age_of_Cement_used_at_site_as_specified"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button1"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:text="@string/view"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview10"
-                    app:layout_constraintVertical_bias="1.0" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            tools:ignore="MissingConstraints"
-           >
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/txtview11"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10dp"
-                    android:text="@string/height_of_Stack_not_exceeding_limits"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button2"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:text="@string/view"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview11"
-                    app:layout_constraintVertical_bias="1.0" />
-
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            tools:ignore="MissingConstraints">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/txtview12"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10dp"
-                    android:text="@string/cement_Bags_arenot_directly_resting_on_ground"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button3"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:text="@string/view"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview12"
-                    app:layout_constraintVertical_bias="1.0" />
-
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            tools:ignore="MissingConstraints"
-            >
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/txtview13"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/fifo_system_implement_FirstInFirstOut"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button4"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:text="@string/view"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview13"
-                    app:layout_constraintVertical_bias="1.0" />
-
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardview5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
-            android:layout_marginEnd="@dimen/dimen_10dp"
-            app:cardCornerRadius="@dimen/dimen_10dp"
-            app:cardElevation="@dimen/dimen_5dp"
-            app:rippleColor="@color/md_theme_onPrimaryContainer"
-            tools:ignore="MissingConstraints"
-            >
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_theme_onSecondary"
-                android:layout_margin="@dimen/dimen_5dp">
-
-                <TextView
-                    android:id="@+id/txtview14"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dimen_10dp"
-                    android:text="@string/adequate_space_available_around_between_stacksandexteriorwallas"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button5"
-                    android:layout_width="@dimen/dimen_80dp"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:gravity="center"
-                    android:text="@string/view"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtview14"
-                    app:layout_constraintVertical_bias="1.0" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
