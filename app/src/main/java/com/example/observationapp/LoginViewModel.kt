@@ -84,6 +84,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 val submenu = loginUseCase.saveMenuSubModule(it.submodules)
                 Log.d(TAG, "saveLoginDataToBD submenu: $submenu ")
             }
+            saveUserIDIntoDataStore(data.user.user_id)
             val user = loginUseCase.saveLoginUserInfo(data.user)
             Log.d(TAG, "saveLoginDataToBD: userValue: $user")
             _loginUserInfo.value = user
@@ -93,6 +94,12 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     fun saveUserLoggedIn(isSuccess: Boolean) {
         viewModelScope.launch {
             dataStoreRepoInterface.putBoolean(CommonConstant.USER_LOGGED_IN, isSuccess)
+        }
+    }
+
+    private fun saveUserIDIntoDataStore(id: String) {
+        viewModelScope.launch {
+            dataStoreRepoInterface.putString(CommonConstant.USER_ID, id)
         }
     }
 

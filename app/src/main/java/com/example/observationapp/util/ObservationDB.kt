@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.example.observationapp.models.Accountable
 import com.example.observationapp.models.Module
 import com.example.observationapp.models.ObservationCategory
+import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
@@ -19,6 +20,7 @@ import com.example.observationapp.models.UnitModel
 import com.example.observationapp.models.UserModel
 import com.example.observationapp.repository.database.LoginDao
 import com.example.observationapp.repository.database.ObservationDao
+import com.example.observationapp.repository.database.ObservationHistoryDao
 import com.example.observationapp.repository.database.ProjectDao
 import com.example.observationapp.repository.database.ProjectModelConverter
 
@@ -38,6 +40,7 @@ import com.example.observationapp.repository.database.ProjectModelConverter
         UserModel::class,
         Module::class,
         Submodule::class,
+        ObservationHistory::class,
     ], version = 1, exportSchema = false
 )
 @TypeConverters(ProjectModelConverter::class)
@@ -45,5 +48,6 @@ abstract class ObservationDB : RoomDatabase() {
     abstract fun projectDao(): ProjectDao
     abstract fun observationDao(): ObservationDao
     abstract fun loginDao(): LoginDao
+    abstract fun observationHistoryDao(): ObservationHistoryDao
 
 }
