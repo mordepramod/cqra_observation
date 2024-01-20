@@ -66,4 +66,10 @@
     <string name="logout">Logout</string>
     <string name="refresh_project_data">Refresh project data</string>
     <string name="feature_is_coming_soon">Feature is coming soon…</string>
+    <string name="label_brush">Brush</string>
+    <string name="label_text">Text</string>
+    <string name="label_rectangle">Rectangle</string>
+    <string name="label_line">Line</string>
+    <string name="label_arrow">Arrow</string>
+    <string name="label_oval">Oval</string>
 </resources>

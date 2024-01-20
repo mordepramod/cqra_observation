@@ -23,9 +23,6 @@
         android:theme="@style/Theme.ObservationApp"
         tools:targetApi="31">
         <activity
-            android:name=".dashboard.presentationlayer.ui.activity.DashBoadScreen"
-            android:exported="false" />
-        <activity
             android:name=".dashboard.presentationlayer.ui.activity.SplashScrActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
@@ -37,6 +34,10 @@
         </activity>
         <activity
             android:name=".dashboard.presentationlayer.ui.activity.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".photo_edit.EditImageActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".login.presentation.ui.activity.LoginActivity"
