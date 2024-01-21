@@ -7,17 +7,6 @@
     android:fillViewport="true"
     tools:context=".dashboard.presentationlayer.ui.fragment.ObservationFragment">
 
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_20dp"
-        android:contentDescription="@string/add_observation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/circle_add_icon"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ScrollView
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -225,6 +214,38 @@
                     android:hint="@string/accountable"
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:layout_marginBottom="@dimen/dimen_10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_marginEnd="@dimen/dimen_10dp"
+                    android:id="@+id/btnSavedImages"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="View Images"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_marginEnd="@dimen/dimen_10dp"
+                    android:id="@+id/btnCaptureImages"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="Capture Image"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSavedForm"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="Save"
+                    android:layout_weight="1" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

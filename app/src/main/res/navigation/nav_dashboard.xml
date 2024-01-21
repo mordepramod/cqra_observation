@@ -20,14 +20,19 @@
         android:id="@+id/observationFragment"
         android:name="com.example.observationapp.dashboard.presentationlayer.ui.fragment.ObservationFragment"
         android:label="Observation"
-        tools:layout="@layout/fragment_observation" >
+        tools:layout="@layout/fragment_observation">
         <action
-            android:id="@+id/action_observationFragment_to_fragmentQuestionsAnswers"
-            app:destination="@id/fragmentQuestionsAnswers" />
+            android:id="@+id/action_observationFragment_to_viewImageFragment"
+            app:destination="@id/viewImageFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentQuestionsAnswers"
         android:name="com.example.observationapp.FragmentQuestionsAnswers"
         android:label="fragment_questions_answers"
         tools:layout="@layout/fragment_questions_answers" />
+    <fragment
+        android:id="@+id/viewImageFragment"
+        android:name="com.example.observationapp.photo_edit.ViewImageFragment"
+        android:label="@string/view_photo"
+        tools:layout="@layout/fragment_view_image" />
 </navigation>

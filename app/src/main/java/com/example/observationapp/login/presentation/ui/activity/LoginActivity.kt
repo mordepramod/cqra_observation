@@ -45,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             login()
-            //launchActivity<DashboardActivity>()
         }
 
     }

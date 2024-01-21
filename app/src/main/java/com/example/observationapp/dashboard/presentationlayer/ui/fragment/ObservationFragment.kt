@@ -1,14 +1,19 @@
 package com.example.observationapp.dashboard.presentationlayer.ui.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.example.observationapp.R
 import com.example.observationapp.dashboard.domainlayer.ObservationViewModel
 import com.example.observationapp.databinding.FragmentObservationBinding
 import com.example.observationapp.models.Accountable
@@ -19,8 +24,12 @@ import com.example.observationapp.models.StageModel
 import com.example.observationapp.models.StructureModel
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
+import com.example.observationapp.photo_edit.EditImageActivity
+import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.showShortToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class ObservationFragment : Fragment() {
@@ -47,12 +56,15 @@ class ObservationFragment : Fragment() {
     private var observationTypeList = listOf<ObservationType>()
     private var observationSeverityList = listOf<ObservationSeverity>()
     private var accountableList = listOf<Accountable>()
+    private var savedPathList = arrayListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentObservationBinding.inflate(inflater, container, false)
+        /*savedPathList.add("/storage/emulated/0/Pictures/1705822595241.png")
+        savedPathList.add("/storage/emulated/0/Pictures/1705822617155.png")*/
         return binding.root
     }
 
@@ -60,7 +72,48 @@ class ObservationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         liveDataObservers()
         setProjectAdapterData()
+        clickListeners()
+
     }
+
+    private fun clickListeners() {
+        binding.btnCaptureImages.setOnClickListener {
+            //requireContext().launchActivity<EditImageActivity>()
+            if (savedPathList.size >= 2) {
+                requireContext().showShortToast("You already selected 2 images.")
+            } else {
+                val intent = Intent(requireContext(), EditImageActivity::class.java)
+                resultLauncher.launch(intent)
+            }
+        }
+        binding.btnSavedImages.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putStringArrayList(CommonConstant.IMAGE_PATH1, savedPathList)
+
+
+            findNavController().navigate(
+                R.id.action_observationFragment_to_viewImageFragment,
+                bundle
+            )
+
+        }
+        binding.btnSavedForm.setOnClickListener {
+
+        }
+
+    }
+
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // There are no request codes
+                val data: Intent? = result.data
+                val resultString: String = data?.getStringExtra("result") ?: ""
+                savedPathList.add(resultString)
+                Log.e(TAG, "result: $resultString")
+            }
+        }
+
 
     private fun liveDataObservers() {
 

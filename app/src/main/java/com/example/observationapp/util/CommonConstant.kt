@@ -11,4 +11,7 @@ object CommonConstant {
     const val GET_PROJECTS_API_CALLED = "GET_PROJECTS_API_CALLED"
     const val USER_LOGGED_IN = "USER_LOGGED_IN"
 
+    const val IMAGE_PATH1: String = "LOCAL_SAVED_IMAGE_PATH_1"
+    const val IMAGE_PATH2: String = "LOCAL_SAVED_IMAGE_PATH_2"
+
 }

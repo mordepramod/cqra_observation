@@ -2,6 +2,7 @@ package com.example.observationapp.photo_edit
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -32,6 +33,7 @@ import com.example.observationapp.R
 import com.example.observationapp.databinding.ActivityEditImageBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
 import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
@@ -44,6 +46,7 @@ import ja.burhanrashid52.photoeditor.shape.ShapeType
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+@AndroidEntryPoint
 class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnClickListener,
     ShapeBSFragment.Properties,
     EditingToolsAdapter.OnItemSelected {
@@ -200,6 +203,22 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                                 showSnackbar("Image Saved Successfully")
                                 mSaveImageUri = uri
                                 mPhotoEditorView.source.setImageURI(mSaveImageUri)
+                                Log.d(
+                                    TAG,
+                                    "onFileCreateResult: ${result.toString()}, filePath: $filePath, fileName: $fileName"
+                                )
+                                val index = filePath.lastIndexOf('/')
+                                val string = filePath.substring(0, index)
+                                val path = "$string/$fileName"
+                                Log.d(
+                                    TAG,
+                                    "onFileCreateResult: truncated str: $string, actualPath: $path"
+                                )
+                                val returnIntent = Intent()
+                                returnIntent.putExtra("result", path);
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                finish()
+
                             } else {
                                 hideLoading()
                                 showSnackbar("Failed to save Image")
