@@ -117,11 +117,17 @@ class DashboardFragment : Fragment() {
                         lifecycleScope.launch {
                             viewModel.deleteAllTablesData()
                             viewModel.deleteDataStore()
-                            viewModel.deleteLoginRelatedData()
+                            val intValue = viewModel.deleteLoginRelatedData()
+                            Log.d(TAG, "deleteLoginRelatedData :$intValue ")
+                            if (intValue >= 0) {
+                                requireContext().launchActivity<SplashScrActivity> {
+                                    requireActivity().finish()
+                                }
+                            } else {
+                                requireContext().showShortToast(getString(R.string.something_is_wrong))
+                            }
                         }
-                        requireContext().launchActivity<SplashScrActivity> {
-                            requireActivity().finish()
-                        }
+
                         true
                     }
 
@@ -189,7 +195,7 @@ class DashboardFragment : Fragment() {
             override fun onItemClick(position: Int) {
                 if (moduleList[position].module_id == "6") {
                     viewModel.resetLiveData()
-                    navController.navigate(R.id.dashboardFragment_to_observationFragment)
+                    navController.navigate(R.id.action_dashboardFragment_to_fragmentHistory)
                 }
             }
         })
