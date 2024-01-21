@@ -212,7 +212,7 @@
                     android:id="@+id/btnSavedImages"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="View Images"
+                    android:text="@string/view_images"
                     android:layout_weight="1" />
 
                 <com.google.android.material.button.MaterialButton
@@ -220,14 +220,14 @@
                     android:id="@+id/btnCaptureImages"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="Capture Image"
+                    android:text="@string/capture_image"
                     android:layout_weight="1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSavedForm"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
