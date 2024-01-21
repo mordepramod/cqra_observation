@@ -77,4 +77,5 @@
     <string name="label_oval">Oval</string>
     <string name="view_photo">View Photo</string>
     <string name="view_images">View Images</string>
+    <string name="s_is_empty">%s is empty</string>
 </resources>

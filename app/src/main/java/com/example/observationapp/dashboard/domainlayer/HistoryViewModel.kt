@@ -37,7 +37,6 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _observationHistoryList.value = observationHistoryUseCase.getObservationHistoryList()
         }
-
     }
 
     fun getObservationHistoryAPI() {

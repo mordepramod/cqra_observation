@@ -37,6 +37,9 @@ class ObservationHistoryUseCase @Inject constructor() {
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun insertObservationHistory(model: ObservationHistory): Long {
+        return observationDBRepo.insertObservationHistory(model)
+    }
 
     companion object {
         const val TAG = "ProjectListUseCase"

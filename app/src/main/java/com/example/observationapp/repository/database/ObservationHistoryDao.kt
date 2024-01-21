@@ -14,6 +14,9 @@ interface ObservationHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertObservationHistoryList(list: List<ObservationHistory>): List<Long>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertObservationHistory(model: ObservationHistory): Long
+
 
     /*******************    Insert Data into DB Ends     ********************/
 

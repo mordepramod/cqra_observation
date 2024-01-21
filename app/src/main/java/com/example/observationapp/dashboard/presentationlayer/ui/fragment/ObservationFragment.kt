@@ -98,6 +98,79 @@ class ObservationFragment : Fragment() {
 
         }
         binding.btnSavedForm.setOnClickListener {
+            val description = binding.autoDescriptionName.text.toString()
+            val remark = binding.autoRemarkName.text.toString()
+            val reference = binding.autoReferenceName.text.toString()
+
+
+            if (viewModel.isValueEmpty(projectId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "project name"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(structureId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "structure name"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(stageOrFloorId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "stage/floor name"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(tradeGroupId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "trade group name"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(tradeId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "trade name"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(observationTypeId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "observation type"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(description)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "description"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(remark)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "remark"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(reference)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "reference"))
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(observationSeverityId)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        "observation severity"
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(accountableId)) {
+                requireContext().showShortToast(getString(R.string.s_is_empty, "accountable"))
+                return@setOnClickListener
+            }
+            if (savedPathList.size == 0) {
+                requireContext().showShortToast("No images are selected")
+                return@setOnClickListener
+            }
+            viewModel.saveForm(
+                projectId,
+                structureId,
+                stageOrFloorId,
+                tradeGroupId,
+                tradeId,
+                observationTypeId,
+                description,
+                remark,
+                reference,
+                observationSeverityId,
+                accountableId,
+                savedPathList
+            )
+
 
         }
 
@@ -126,6 +199,7 @@ class ObservationFragment : Fragment() {
                     projectList
                 )
                 binding.autoCompleteProjectName.setAdapter(adapterProject)
+                viewModel.getUserId()
             }
         }
 
@@ -182,6 +256,14 @@ class ObservationFragment : Fragment() {
                         tradeModelList
                     )
                     binding.autoActivityName.setAdapter(tradeModelAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.observationHistoryModel.observe(viewLifecycleOwner) {
+                it?.let {
+                    findNavController().popBackStack()
                 }
             }
         }
