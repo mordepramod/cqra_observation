@@ -15,15 +15,13 @@ import java.io.File
 @AndroidEntryPoint
 class ViewImageFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var imagePath1: ArrayList<String>? = null
-    private var imagePath2: String? = null
+    private var imagePath: ArrayList<String>? = null
     private lateinit var binding: FragmentViewImageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            imagePath1 = it.getStringArrayList(CommonConstant.IMAGE_PATH1)
-            //imagePath2 = it.getString(CommonConstant.IMAGE_PATH2)
+            imagePath = it.getStringArrayList(CommonConstant.IMAGE_PATH)
         }
     }
 
@@ -39,9 +37,9 @@ class ViewImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.e(TAG, "onViewCreated: $imagePath1")
+        Log.e(TAG, "onViewCreated: $imagePath")
 
-        imagePath1?.forEachIndexed { index, str ->
+        imagePath?.forEachIndexed { index, str ->
             if (index == 0) {
                 val imgFile = File(str)
                 if (imgFile.exists()) {
@@ -87,8 +85,7 @@ class ViewImageFragment : Fragment() {
         fun newInstance(param1: String) =
             ViewImageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(CommonConstant.IMAGE_PATH1, param1)
-                    putString(CommonConstant.IMAGE_PATH2, param1)
+                    putString(CommonConstant.IMAGE_PATH, param1)
                 }
             }
     }

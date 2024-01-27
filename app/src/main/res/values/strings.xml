@@ -53,8 +53,9 @@
     <string name="question_answer">Question &amp; Answer</string>
     <string name="quantity">Quantity</string>
     <string name="unitprice">UnitPrice</string>
-    <string name="Status">Quantity</string>
     <string name="accountable">Accountable</string>
+    <string name="status">Status</string>
+    <string name="close_by">Close by</string>
     <string name="observation_severity">Observation Severity</string>
     <string name="reference">Reference</string>
     <string name="remark">Remark</string>
@@ -78,4 +79,7 @@
     <string name="view_photo">View Photo</string>
     <string name="view_images">View Images</string>
     <string name="s_is_empty">%s is empty</string>
+    <string name="no_images_are_selected">No images are selected</string>
+    <string name="target_date">Target Date</string>
+    <string name="select_target_date">Select target date</string>
 </resources>

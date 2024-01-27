@@ -26,9 +26,16 @@ import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
 import com.example.observationapp.photo_edit.EditImageActivity
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility.getSelectedDateInString
+import com.example.observationapp.util.Utility.getTimeStampInLong
 import com.example.observationapp.util.showShortToast
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.TimeZone
 
 
 @AndroidEntryPoint
@@ -88,8 +95,7 @@ class ObservationFragment : Fragment() {
         }
         binding.btnSavedImages.setOnClickListener {
             val bundle = Bundle()
-            bundle.putStringArrayList(CommonConstant.IMAGE_PATH1, savedPathList)
-
+            bundle.putStringArrayList(CommonConstant.IMAGE_PATH, savedPathList)
 
             findNavController().navigate(
                 R.id.action_observationFragment_to_viewImageFragment,
@@ -104,56 +110,106 @@ class ObservationFragment : Fragment() {
 
 
             if (viewModel.isValueEmpty(projectId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "project name"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.project_name)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(structureId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "structure name"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.structure_name)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(stageOrFloorId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "stage/floor name"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.stage_floor)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(tradeGroupId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "trade group name"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.trade_group)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(tradeId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "trade name"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.activity_trade)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(observationTypeId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "observation type"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.observation_type)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(description)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "description"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.description)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(remark)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "remark"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.remark)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(reference)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "reference"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.reference)
+                    )
+                )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(observationSeverityId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
-                        "observation severity"
+                        getString(R.string.observation_severity)
                     )
                 )
                 return@setOnClickListener
             }
             if (viewModel.isValueEmpty(accountableId)) {
-                requireContext().showShortToast(getString(R.string.s_is_empty, "accountable"))
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.accountable)
+                    )
+                )
                 return@setOnClickListener
             }
             if (savedPathList.size == 0) {
-                requireContext().showShortToast("No images are selected")
+                requireContext().showShortToast(getString(R.string.no_images_are_selected))
                 return@setOnClickListener
             }
             viewModel.saveForm(
@@ -360,6 +416,59 @@ class ObservationFragment : Fragment() {
         binding.autoAccountableName.setOnItemClickListener { _, _, position, _ ->
             accountableId = accountableList[position].user_id
             Log.d(TAG, "autoAccountableName: $accountableId")
+        }
+
+        binding.etDatePicker.setOnClickListener { datePicker ->
+            val today: Long
+            if (binding.etDatePicker.text.toString().isNotEmpty()) {
+                today = getTimeStampInLong(binding.etDatePicker.text.toString())
+                Log.d(TAG, "etDatePicker: $today")
+            } else {
+                today = MaterialDatePicker.todayInUtcMilliseconds()
+            }
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+
+            calendar.timeInMillis = today
+            calendar[Calendar.MONTH] = Calendar.JANUARY
+            val janThisYear = calendar.timeInMillis
+
+            calendar.timeInMillis = today
+            calendar[Calendar.MONTH] = Calendar.DECEMBER
+            val decThisYear = calendar.timeInMillis
+
+// Build constraints.
+            val constraintsBuilder =
+                CalendarConstraints.Builder()
+                    .setStart(janThisYear)
+                    .setEnd(decThisYear)
+                    .setValidator(DateValidatorPointForward.now())
+
+            val picker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText(getString(R.string.select_target_date))
+                    .setSelection(today)
+                    .setCalendarConstraints(constraintsBuilder.build())
+                    .build()
+            picker.show(childFragmentManager, "tag")
+
+
+            picker.addOnPositiveButtonClickListener {
+                it?.let {
+                    Log.d(TAG, "addOnPositiveButtonClickListener $it: ")
+                    val date = getSelectedDateInString(it)
+                    binding.etDatePicker.setText(date)
+                }
+                // Respond to positive button click.
+            }
+            picker.addOnNegativeButtonClickListener {
+                // Respond to negative button click.
+            }
+            picker.addOnCancelListener {
+                // Respond to cancel button click.
+            }
+            picker.addOnDismissListener {
+                // Respond to dismiss events.
+            }
         }
 
     }
