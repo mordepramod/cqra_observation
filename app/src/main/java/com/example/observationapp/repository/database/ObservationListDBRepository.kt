@@ -2,9 +2,11 @@ package com.example.observationapp.repository.database
 
 import androidx.lifecycle.LiveData
 import com.example.observationapp.models.Accountable
+import com.example.observationapp.models.AllocatedToModel
 import com.example.observationapp.models.ObservationCategory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
+import com.example.observationapp.models.StatusModel
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
 import javax.inject.Inject
@@ -30,6 +32,12 @@ class ObservationListDBRepository @Inject constructor(
     suspend fun saveAccountableList(list: List<Accountable>): List<Long> =
         observationDao.insertAccountableList(list)
 
+    suspend fun saveAllocatedToList(list: List<AllocatedToModel>): List<Long> =
+        observationDao.insertAllocatedToModelList(list)
+
+    suspend fun saveAllStatusList(list: List<StatusModel>): List<Long> =
+        observationDao.insertStatusModelList(list)
+
     fun getTradeGroupList(): LiveData<List<TradeGroupModel>> = observationDao.getTradeGroupList()
 
     fun getObservationTypeList(): LiveData<List<ObservationType>> =
@@ -43,7 +51,15 @@ class ObservationListDBRepository @Inject constructor(
     suspend fun getTradeModelList(tradeGroupId: String): List<TradeModel> =
         observationDao.getTradeModelList(tradeGroupId)
 
+    fun getAllocatedToList(): LiveData<List<AllocatedToModel>> =
+        observationDao.getAllocatedToList()
+
+    fun getAllStatusList(): LiveData<List<StatusModel>> =
+        observationDao.getAllStatusToList()
+
     suspend fun deleteAllAccountable(): Int = observationDao.deleteAllAccountable()
+    suspend fun deleteAllocatedTo(): Int = observationDao.deleteAllocatedTo()
+    suspend fun deleteAllStatus(): Int = observationDao.deleteAllStatus()
 
     suspend fun deleteAllObservationCat(): Int = observationDao.deleteAllObservationCat()
 

@@ -127,6 +127,8 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         viewModelScope.async {
             projectListRepo.deleteAll()
             deleteAccountable()
+            deleteStatusList()
+            deleteAllocatedTo()
             deleteAllObservationCat()
             deleteAllObservationSeverity()
             deleteAllObservationType()
@@ -182,6 +184,16 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
                 val value = observationListUseCase.saveAccountableList(model.accountables)
                 Log.e(TAG, "saveAccountableList: $value")
             }
+
+            if (model.allocatedTo.isNotEmpty()) {
+                val value = observationListUseCase.saveAllocatedToList(model.allocatedTo)
+                Log.e(TAG, "allocatedTo: $value")
+            }
+
+            if (model.statusList.isNotEmpty()) {
+                val value = observationListUseCase.saveAllStatusList(model.statusList)
+                Log.e(TAG, "statusList: $value")
+            }
             if (model.observation_severity.isNotEmpty()) {
                 val value =
                     observationListUseCase.saveObservationSeverityList(model.observation_severity)
@@ -220,6 +232,20 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
         return viewModelScope.async(Dispatchers.IO) {
             val value = observationListUseCase.deleteAllAccountable()
             Log.d(TAG, "deleteAccountable: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteAllocatedTo(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllocatedTo()
+            Log.d(TAG, "deleteAllocatedTo: value: $value")
+        }.await()
+    }
+
+    private suspend fun deleteStatusList(): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val value = observationListUseCase.deleteAllStatus()
+            Log.d(TAG, "deleteStatusList: value: $value")
         }.await()
     }
 

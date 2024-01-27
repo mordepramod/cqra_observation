@@ -42,4 +42,18 @@ object Utility {
         return cal.time.time
     }
 
+    fun getFilePathWithoutName(filePath: String): String {
+        val index = getLastIndexOfFilePath(filePath)
+        return filePath.substring(0, index)
+    }
+
+    fun getFileNameFromPath(filePath: String): String {
+        val index = getLastIndexOfFilePath(filePath)
+        return filePath.substring(index, filePath.length)
+    }
+
+    fun getLastIndexOfFilePath(filePath: String): Int {
+        return filePath.lastIndexOf('/')
+    }
+
 }

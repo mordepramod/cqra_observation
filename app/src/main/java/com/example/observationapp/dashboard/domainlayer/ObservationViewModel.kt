@@ -1,17 +1,20 @@
 package com.example.observationapp.dashboard.domainlayer
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.Accountable
+import com.example.observationapp.models.AllocatedToModel
 import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
 import com.example.observationapp.models.StageModel
+import com.example.observationapp.models.StatusModel
 import com.example.observationapp.models.StructureModel
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
@@ -20,6 +23,7 @@ import com.example.observationapp.repository.database.ObservationListDBRepositor
 import com.example.observationapp.repository.database.ProjectDBRepository
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getTodayDateAndTime
+import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -53,6 +57,17 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     private var _observationHistoryModel = MutableLiveData<Long>()
     val observationHistoryModel: LiveData<Long> = _observationHistoryModel
 
+    var projectId = ""
+    var structureId = ""
+    var stageOrFloorId = ""
+    var tradeGroupId = ""
+    var tradeId = ""
+    var observationTypeId = ""
+    var observationSeverityId = ""
+    var accountableId = ""
+    var closeById = ""
+    var statusId = ""
+
     fun getProjectList(): LiveData<List<ProjectModelItem>> {
         return projectDBRepository.projectList
     }
@@ -83,6 +98,11 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
 
     fun getAccountableList(): LiveData<List<Accountable>> = observationDBRepo.getAccountableList()
 
+    fun getAllocatedToList(): LiveData<List<AllocatedToModel>> =
+        observationDBRepo.getAllocatedToList()
+
+    fun getAllStatusList(): LiveData<List<StatusModel>> = observationDBRepo.getAllStatusList()
+
     fun getTradeModelList(tradeGroupId: String) {
         if (tradeGroupId.isNotEmpty()) {
             viewModelScope.launch {
@@ -103,24 +123,20 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     }
 
     fun saveForm(
-        projectId: String,
-        structureId: String,
-        stageOrFloorId: String,
-        tradeGroupId: String,
-        tradeId: String,
-        observationTypeId: String,
+        location: String,
         description: String,
         remark: String,
         reference: String,
-        observationSeverityId: String,
-        accountableId: String,
-        savedPathList: ArrayList<String>
+        targetDate: String,
+        savedPathList: ArrayList<String>,
+        savedFileNameList: ArrayList<String>,
     ) {
         val model = ObservationHistory()
         model.project_id = projectId
         model.structure_id = structureId
         model.floors = arrayListOf(stageOrFloorId.toInt())
         model.tradegroup_id = tradeGroupId
+        model.activityOrTradeId = tradeId
         model.observation_type = observationTypeId
         model.description = description
         model.remark = remark
@@ -129,13 +145,57 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         model.site_representative = accountableId
         model.created_by = userId
         model.observation_date = getTodayDateAndTime()
-        model.location = savedPathList.toString()
-        saveObservationHistory(model)
+        model.location = location
+        model.target_date = targetDate
+        model.status = statusId
+        model.closed_by = closeById
+
+        model.observation_image = customisedImageList(savedFileNameList)
+
+        Log.d(TAG, "saveForm: model: $model")
+        val json = JsonObject()
+        json.addProperty("project_id", projectId)
+        json.addProperty("structure_id", structureId)
+        json.addProperty("floors", arrayListOf(stageOrFloorId.toInt()).toString())
+        json.addProperty("tradegroup_id", tradeGroupId)
+        json.addProperty("activity_id", tradeId)
+        json.addProperty("temp_observation_number", System.currentTimeMillis().toString())
+        json.addProperty("observation_category", "")
+        json.addProperty("observation_type", observationTypeId)
+        json.addProperty("location", location)
+        json.addProperty("description", description)
+        json.addProperty("remark", remark)
+        json.addProperty("reference", reference)
+        json.addProperty("observation_severity", observationSeverityId)
+        json.addProperty("site_representative", accountableId)
+        json.addProperty("status", statusId)
+        json.addProperty("closed_by", closeById)
+        json.addProperty("observation_date", getTodayDateAndTime())
+        json.addProperty("target_date", targetDate)
+        json.addProperty("observation_image", customisedImageList(savedFileNameList))
+        Log.d(TAG, "saveForm: $json")
+
+        //saveObservationHistory(model)
+    }
+
+    private fun customisedImageList(savedPathList: ArrayList<String>): String {
+        val customisedList = arrayListOf<String>()
+        savedPathList.forEachIndexed { index, path ->
+            val getFileName =
+                "${projectId}_${structureId}_${tradeId}_${path}_${index + 1}${CommonConstant.FILE_EXTENSIONS}"
+            customisedList.add(getFileName)
+        }
+
+        return customisedList.toString()
     }
 
     private fun saveObservationHistory(model: ObservationHistory) {
         viewModelScope.launch {
             _observationHistoryModel.value = observationHistoryRepo.insertObservationHistory(model)
         }
+    }
+
+    companion object {
+        private const val TAG = "ObservationViewModel"
     }
 }

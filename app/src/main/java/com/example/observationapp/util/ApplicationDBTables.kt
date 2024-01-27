@@ -13,6 +13,8 @@ object ApplicationDBTables {
     const val TABLE_OBSERVATION_TYPE = "observation_type_table"
     const val TABLE_OBSERVATION_HISTORY = "observation_history_table"
     const val TABLE_ACCOUNTABLE = "accountable_table"
+    const val TABLE_ALLOCATED_TO = "allocated_to_table"
+    const val TABLE_STATUS = "status_table"
     const val TABLE_OBSERVATION_CATEGORY = "observation_category_table"
     const val TABLE_OBSERVATION_SEVERITY = "observation_severity_table"
     const val TABLE_MENU_MODULE = "menu_module_table"

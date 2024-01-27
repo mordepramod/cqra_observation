@@ -3,6 +3,9 @@ package com.example.observationapp.util
 object CommonConstant {
 
 
+    const val FILE_PATH: String = "filePath"
+    const val FILE_NAMES: String = "fileName"
+    const val FILE_EXTENSIONS: String = ".png"
     const val DATE_FORMAT_dd_mm_yyyy: String = "dd/MM/yyyy"
     const val DATE_FORMAT_dd_mm_yyyy_hh_mm_ss: String = "dd/MM/yyyy hh:mm:ss"
     const val BASE_URL = "http://logicsync.in/"

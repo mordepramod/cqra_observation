@@ -17,10 +17,12 @@ import com.example.observationapp.R
 import com.example.observationapp.dashboard.domainlayer.ObservationViewModel
 import com.example.observationapp.databinding.FragmentObservationBinding
 import com.example.observationapp.models.Accountable
+import com.example.observationapp.models.AllocatedToModel
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
 import com.example.observationapp.models.StageModel
+import com.example.observationapp.models.StatusModel
 import com.example.observationapp.models.StructureModel
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
@@ -41,14 +43,6 @@ import java.util.TimeZone
 @AndroidEntryPoint
 class ObservationFragment : Fragment() {
     private lateinit var binding: FragmentObservationBinding
-    private var projectId = ""
-    private var structureId = ""
-    private var stageOrFloorId = ""
-    private var tradeGroupId = ""
-    private var tradeId = ""
-    private var observationTypeId = ""
-    private var observationSeverityId = ""
-    private var accountableId = ""
 
     companion object {
         private const val TAG = "ObservationFragment"
@@ -63,7 +57,10 @@ class ObservationFragment : Fragment() {
     private var observationTypeList = listOf<ObservationType>()
     private var observationSeverityList = listOf<ObservationSeverity>()
     private var accountableList = listOf<Accountable>()
+    private var allocatedToList = listOf<AllocatedToModel>()
+    private var statusList = listOf<StatusModel>()
     private var savedPathList = arrayListOf<String>()
+    private var savedFileNameList = arrayListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,11 +102,13 @@ class ObservationFragment : Fragment() {
         }
         binding.btnSavedForm.setOnClickListener {
             val description = binding.autoDescriptionName.text.toString()
+            val location = binding.autoLocationName.text.toString()
             val remark = binding.autoRemarkName.text.toString()
             val reference = binding.autoReferenceName.text.toString()
+            val targetDate = binding.etDatePicker.text.toString()
 
 
-            if (viewModel.isValueEmpty(projectId)) {
+            if (viewModel.isValueEmpty(viewModel.projectId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -118,7 +117,7 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(structureId)) {
+            if (viewModel.isValueEmpty(viewModel.structureId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -127,7 +126,7 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(stageOrFloorId)) {
+            if (viewModel.isValueEmpty(viewModel.stageOrFloorId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -136,7 +135,7 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(tradeGroupId)) {
+            if (viewModel.isValueEmpty(viewModel.tradeGroupId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -145,7 +144,7 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(tradeId)) {
+            if (viewModel.isValueEmpty(viewModel.tradeId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -154,7 +153,7 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(observationTypeId)) {
+            if (viewModel.isValueEmpty(viewModel.observationTypeId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -190,7 +189,16 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(observationSeverityId)) {
+            if (viewModel.isValueEmpty(location)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.location)
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(viewModel.observationSeverityId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
@@ -199,11 +207,38 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (viewModel.isValueEmpty(accountableId)) {
+            if (viewModel.isValueEmpty(viewModel.accountableId)) {
                 requireContext().showShortToast(
                     getString(
                         R.string.s_is_empty,
                         getString(R.string.accountable)
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(viewModel.statusId)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.status)
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(viewModel.closeById)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.close_by)
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(targetDate)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.target_date)
                     )
                 )
                 return@setOnClickListener
@@ -213,18 +248,13 @@ class ObservationFragment : Fragment() {
                 return@setOnClickListener
             }
             viewModel.saveForm(
-                projectId,
-                structureId,
-                stageOrFloorId,
-                tradeGroupId,
-                tradeId,
-                observationTypeId,
+                location,
                 description,
                 remark,
                 reference,
-                observationSeverityId,
-                accountableId,
-                savedPathList
+                targetDate,
+                savedPathList,
+                savedFileNameList
             )
 
 
@@ -237,8 +267,13 @@ class ObservationFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
                 val data: Intent? = result.data
-                val resultString: String = data?.getStringExtra("result") ?: ""
-                savedPathList.add(resultString)
+                val resultString: String = data?.getStringExtra(CommonConstant.FILE_PATH) ?: ""
+                val resultFileNameString: String =
+                    data?.getStringExtra(CommonConstant.FILE_NAMES) ?: ""
+                if (!viewModel.isValueEmpty(resultString)) {
+                    savedPathList.add(resultString)
+                    savedFileNameList.add(resultFileNameString)
+                }
                 Log.e(TAG, "result: $resultString")
             }
         }
@@ -366,59 +401,97 @@ class ObservationFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.getAllocatedToList().observe(viewLifecycleOwner) {
+                it?.let {
+                    allocatedToList = it
+                    val allocatedArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        it
+                    )
+                    binding.autoCloseByName.setAdapter(allocatedArrayAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.getAllStatusList().observe(viewLifecycleOwner) {
+                it?.let {
+                    statusList = it
+                    val statusArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        it
+                    )
+                    binding.autoStatusName.setAdapter(statusArrayAdapter)
+                }
+            }
+        }
+
 
     }
 
     private fun setProjectAdapterData() {
 
         binding.autoCompleteProjectName.setOnItemClickListener { _, _, position, _ ->
-            projectId = projectList[position].project_id
-            viewModel.getStructureList(projectId)
+            viewModel.projectId = projectList[position].project_id
+            viewModel.getStructureList(viewModel.projectId)
             binding.autoStructureName.setText("")
-            Log.d(TAG, "setProjectAdapterData: $projectId")
+            Log.d(TAG, "setProjectAdapterData: ${viewModel.projectId}")
         }
 
         binding.autoStructureName.setOnItemClickListener { _, _, position, _ ->
-            structureId = structureList[position].structure_id
+            viewModel.structureId = structureList[position].structure_id
             binding.autoStageOrFloorName.setText("")
-            viewModel.getStageOrFloorList(structureId)
-            Log.d(TAG, "autoStructureName: $structureId")
+            viewModel.getStageOrFloorList(viewModel.structureId)
+            Log.d(TAG, "autoStructureName: ${viewModel.structureId}")
         }
 
         binding.autoStageOrFloorName.setOnItemClickListener { _, _, position, _ ->
-            stageOrFloorId = stageOrFloorList[position].stage_id
+            viewModel.stageOrFloorId = stageOrFloorList[position].stage_id
             binding.autoTradeGroupName.setText("")
-            Log.d(TAG, "autoStageOrFloorName: $stageOrFloorId")
+            Log.d(TAG, "autoStageOrFloorName: ${viewModel.stageOrFloorId}")
         }
 
         binding.autoTradeGroupName.setOnItemClickListener { _, _, position, _ ->
-            tradeGroupId = tradeGroupModelList[position].tradegroup_id
+            viewModel.tradeGroupId = tradeGroupModelList[position].tradegroup_id
             binding.autoActivityName.setText("")
-            viewModel.getTradeModelList(tradeGroupId)
-            Log.d(TAG, "autoTradeGroupName: $tradeGroupId")
+            viewModel.getTradeModelList(viewModel.tradeGroupId)
+            Log.d(TAG, "autoTradeGroupName: ${viewModel.tradeGroupId}")
         }
 
         binding.autoActivityName.setOnItemClickListener { _, _, position, _ ->
-            tradeId = tradeModelList[position].trade_id
-            Log.d(TAG, "autoActivityTradeName: $tradeId")
+            viewModel.tradeId = tradeModelList[position].trade_id
+            Log.d(TAG, "autoActivityTradeName: ${viewModel.tradeId}")
         }
 
         binding.autoObservationTypeName.setOnItemClickListener { _, _, position, _ ->
-            observationTypeId = observationTypeList[position].type_id
-            Log.d(TAG, "autoObservationTypeName: $observationTypeId")
+            viewModel.observationTypeId = observationTypeList[position].type_id
+            Log.d(TAG, "autoObservationTypeName: ${viewModel.observationTypeId}")
         }
 
         binding.autoObsSeverityName.setOnItemClickListener { _, _, position, _ ->
-            observationSeverityId = observationSeverityList[position].severity_id
-            Log.d(TAG, "autoObsSeverityName: $observationSeverityId")
+            viewModel.observationSeverityId = observationSeverityList[position].severity_id
+            Log.d(TAG, "autoObsSeverityName: ${viewModel.observationSeverityId}")
         }
 
         binding.autoAccountableName.setOnItemClickListener { _, _, position, _ ->
-            accountableId = accountableList[position].user_id
-            Log.d(TAG, "autoAccountableName: $accountableId")
+            viewModel.accountableId = accountableList[position].user_id
+            Log.d(TAG, "autoAccountableName: ${viewModel.accountableId}")
         }
 
-        binding.etDatePicker.setOnClickListener { datePicker ->
+        binding.autoCloseByName.setOnItemClickListener { _, _, position, _ ->
+            viewModel.closeById = allocatedToList[position].role_id
+            Log.d(TAG, "autoCloseByName: ${viewModel.closeById}")
+        }
+
+        binding.autoStatusName.setOnItemClickListener { _, _, position, _ ->
+            viewModel.statusId = statusList[position].status_id
+            Log.d(TAG, "autoStatusName: ${viewModel.statusId}")
+        }
+
+        binding.etDatePicker.setOnClickListener {
             val today: Long
             if (binding.etDatePicker.text.toString().isNotEmpty()) {
                 today = getTimeStampInLong(binding.etDatePicker.text.toString())

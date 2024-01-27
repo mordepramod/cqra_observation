@@ -1,7 +1,12 @@
 package com.example.observationapp.models
 
+import com.google.gson.annotations.SerializedName
+
 data class ObservationData(
     val accountables: List<Accountable>,
+    @SerializedName("status")
+    val statusList: List<StatusModel>,
+    val allocatedTo: List<AllocatedToModel>,
     val observation_category: List<ObservationCategory>,
     val observation_severity: List<ObservationSeverity>,
     val observation_type: List<ObservationType>,

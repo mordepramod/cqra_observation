@@ -31,6 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.observationapp.R
 import com.example.observationapp.databinding.ActivityEditImageBinding
+import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -172,7 +174,8 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
 
     @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
     private fun saveImage() {
-        val fileName = System.currentTimeMillis().toString() + ".png"
+        val timeStampValue = System.currentTimeMillis().toString()
+        val fileName = "$timeStampValue${CommonConstant.FILE_EXTENSIONS}"
         val hasStoragePermission = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -207,16 +210,16 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                                     TAG,
                                     "onFileCreateResult: ${result.toString()}, filePath: $filePath, fileName: $fileName"
                                 )
-                                val index = filePath.lastIndexOf('/')
-                                val string = filePath.substring(0, index)
+                                val string = Utility.getFilePathWithoutName(filePath)
                                 val path = "$string/$fileName"
                                 Log.d(
                                     TAG,
                                     "onFileCreateResult: truncated str: $string, actualPath: $path"
                                 )
                                 val returnIntent = Intent()
-                                returnIntent.putExtra("result", path);
-                                setResult(Activity.RESULT_OK, returnIntent);
+                                returnIntent.putExtra(CommonConstant.FILE_PATH, path)
+                                returnIntent.putExtra(CommonConstant.FILE_NAMES, timeStampValue)
+                                setResult(Activity.RESULT_OK, returnIntent)
                                 finish()
 
                             } else {
