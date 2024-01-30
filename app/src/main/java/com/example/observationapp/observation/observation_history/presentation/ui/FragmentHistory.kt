@@ -98,6 +98,7 @@ class FragmentHistory : Fragment() {
     private fun observeLiveData() {
         viewModel.observationHistory.observe(viewLifecycleOwner) {
             it?.let {
+                hideProgress()
                 viewModel.putObservationHistoryApiCalled(it)
             }
         }

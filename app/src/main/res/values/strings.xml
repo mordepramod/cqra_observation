@@ -83,4 +83,5 @@
     <string name="target_date">Target Date</string>
     <string name="select_target_date">Select target date</string>
     <string name="location">Location</string>
+    <string name="observation_category">Observation category</string>
 </resources>

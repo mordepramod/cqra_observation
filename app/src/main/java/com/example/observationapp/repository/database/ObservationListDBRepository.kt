@@ -43,6 +43,9 @@ class ObservationListDBRepository @Inject constructor(
     fun getObservationTypeList(): LiveData<List<ObservationType>> =
         observationDao.getObservationTypeList()
 
+    fun getObservationCategoryList(): LiveData<List<ObservationCategory>> =
+        observationDao.getObservationCategoryList()
+
     fun getObservationSeverityList(): LiveData<List<ObservationSeverity>> =
         observationDao.getObservationSeverityList()
 

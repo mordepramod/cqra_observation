@@ -18,6 +18,7 @@ import com.example.observationapp.dashboard.domainlayer.ObservationViewModel
 import com.example.observationapp.databinding.FragmentObservationBinding
 import com.example.observationapp.models.Accountable
 import com.example.observationapp.models.AllocatedToModel
+import com.example.observationapp.models.ObservationCategory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
@@ -55,6 +56,7 @@ class ObservationFragment : Fragment() {
     private var tradeGroupModelList = listOf<TradeGroupModel>()
     private var tradeModelList = listOf<TradeModel>()
     private var observationTypeList = listOf<ObservationType>()
+    private var observationCategoryList = listOf<ObservationCategory>()
     private var observationSeverityList = listOf<ObservationSeverity>()
     private var accountableList = listOf<Accountable>()
     private var allocatedToList = listOf<AllocatedToModel>()
@@ -158,6 +160,15 @@ class ObservationFragment : Fragment() {
                     getString(
                         R.string.s_is_empty,
                         getString(R.string.observation_type)
+                    )
+                )
+                return@setOnClickListener
+            }
+            if (viewModel.isValueEmpty(viewModel.observationCategoryId)) {
+                requireContext().showShortToast(
+                    getString(
+                        R.string.s_is_empty,
+                        getString(R.string.observation_category)
                     )
                 )
                 return@setOnClickListener
@@ -374,6 +385,20 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
+            viewModel.getObservationCategoryList().observe(viewLifecycleOwner) {
+                it?.let {
+                    observationCategoryList = it
+                    val observationCategoryArrayAdapter = ArrayAdapter(
+                        requireContext(),
+                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                        observationCategoryList
+                    )
+                    binding.autoObservationCategoryName.setAdapter(observationCategoryArrayAdapter)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
             viewModel.getObservationSeverityList().observe(viewLifecycleOwner) {
                 it?.let {
                     observationSeverityList = it
@@ -469,6 +494,11 @@ class ObservationFragment : Fragment() {
         binding.autoObservationTypeName.setOnItemClickListener { _, _, position, _ ->
             viewModel.observationTypeId = observationTypeList[position].type_id
             Log.d(TAG, "autoObservationTypeName: ${viewModel.observationTypeId}")
+        }
+
+        binding.autoObservationCategoryName.setOnItemClickListener { _, _, position, _ ->
+            viewModel.observationCategoryId = observationCategoryList[position].category_id
+            Log.d(TAG, "autoObservationCategoryName: ${viewModel.observationCategoryId}")
         }
 
         binding.autoObsSeverityName.setOnItemClickListener { _, _, position, _ ->

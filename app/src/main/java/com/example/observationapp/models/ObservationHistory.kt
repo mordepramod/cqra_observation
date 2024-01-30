@@ -13,7 +13,7 @@ data class ObservationHistory(
     var closed_by: String = "",
     var created_by: String = "",
     var description: String = "",
-    var floors: List<Int> = arrayListOf(),
+    var floors: String = "",
     var location: String = "",
     var observation_category: String = "",
     var observation_date: String = "",
@@ -29,11 +29,12 @@ data class ObservationHistory(
     var structure_id: String = "",
     var target_date: String = "",
     var tradegroup_id: String = "",
-    var observation_image: String = "",
-    @PrimaryKey
+    var observation_image: List<String>? = arrayListOf(),
+    @PrimaryKey(autoGenerate = true)
+    var primaryObservationId: Int = 0,
     var tempObservationId: String = ""
 ) {
     override fun toString(): String {
-        return "ObservationHistory(activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors=$floors, location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image='$observation_image', tempObservationId='$tempObservationId')"
+        return "ObservationHistory(primaryObservationId = $primaryObservationId, activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors=$floors, location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image='$observation_image', tempObservationId='$tempObservationId')"
     }
 }

@@ -215,5 +215,17 @@ class ProjectModelConverter {
         return Gson().toJson(value, listType)
     }
 
+    @TypeConverter
+    fun toStringList(value: String): List<String>? {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson<List<String>>(value, listType)
+    }
+
+    @TypeConverter
+    fun fromStringList(value: List<String>): String {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().toJson(value, listType)
+    }
+
 
 }
