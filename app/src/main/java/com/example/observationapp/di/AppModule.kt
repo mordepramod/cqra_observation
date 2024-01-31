@@ -7,6 +7,8 @@ import com.example.observationapp.repository.server.ApiRepository
 import com.example.observationapp.repository.server.ApiServices
 import com.example.observationapp.util.CommonConstant.BASE_URL
 import com.example.observationapp.util.CommonConstant.CONNECTION_TIMEOUT
+import com.example.observationapp.util.CommonConstant.CONNECTION_TIMEOUT_READ
+import com.example.observationapp.util.CommonConstant.CONNECTION_TIMEOUT_WRITE
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -61,6 +63,8 @@ object AppModule {
         return OkHttpClient.Builder()
             .addInterceptor(requestInterceptor)
             .connectTimeout(connectionTimeOut(), TimeUnit.SECONDS)
+            .readTimeout(CONNECTION_TIMEOUT_READ, TimeUnit.SECONDS)
+            .writeTimeout(CONNECTION_TIMEOUT_WRITE, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
     }

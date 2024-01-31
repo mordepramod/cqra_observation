@@ -19,20 +19,32 @@ import com.example.observationapp.models.StatusModel
 import com.example.observationapp.models.StructureModel
 import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
+import com.example.observationapp.observation.observation_history.datalayer.ObservationHistoryUseCase
 import com.example.observationapp.repository.database.ObservationHistoryDBRepository
 import com.example.observationapp.repository.database.ObservationListDBRepository
 import com.example.observationapp.repository.database.ProjectDBRepository
+import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getTodayDateAndTime
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ObservationViewModel @Inject constructor() : ViewModel() {
+    private var savedId: Long = -1L
+
     @Inject
     lateinit var projectDBRepository: ProjectDBRepository
 
@@ -44,6 +56,9 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var dataStoreRepoInterface: DataStoreRepoInterface
+
+    @Inject
+    lateinit var observationHistoryUseCase: ObservationHistoryUseCase
 
     private var userId = ""
 
@@ -58,6 +73,9 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
 
     private var _observationHistoryModel = MutableLiveData<Long>()
     val observationHistoryModel: LiveData<Long> = _observationHistoryModel
+
+    private var _observationFormModel = MutableLiveData<Boolean>()
+    val observationFormModel: LiveData<Boolean> = _observationFormModel
 
     var projectId = ""
     var structureId = ""
@@ -137,6 +155,7 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         savedPathList: ArrayList<String>,
         savedFileNameList: ArrayList<String>,
     ) {
+        _observationFormModel.value = true
         val model = ObservationHistory()
         model.project_id = projectId
         model.structure_id = structureId
@@ -156,16 +175,16 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         model.status = statusId
         model.closed_by = closeById
         model.observation_image = savedPathList
-        model.tempObservationId = System.currentTimeMillis().toString()
+        model.temp_observation_number = System.currentTimeMillis().toString()
+        Log.d(TAG, "saveForm: model : $model")
 
-        Log.d(TAG, "saveForm: model: $model")
         val json = JsonObject()
         json.addProperty("project_id", projectId)
         json.addProperty("structure_id", structureId)
         json.addProperty("floors", stageOrFloorId)
         json.addProperty("tradegroup_id", tradeGroupId)
         json.addProperty("activity_id", tradeId)
-        json.addProperty("temp_observation_number", model.tempObservationId)
+        json.addProperty("temp_observation_number", model.temp_observation_number)
         json.addProperty("observation_category", observationCategoryId)
         json.addProperty("observation_type", observationTypeId)
         json.addProperty("location", location)
@@ -181,7 +200,79 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         json.add("observation_image", customisedImageList(savedFileNameList))
         Log.d(TAG, "saveForm: $json")
 
-        saveObservationHistory(model)
+        saveObservationHistoryAPI(json, model)
+
+        //saveObservationHistory(model)
+    }
+
+    private fun saveObservationHistoryAPI(json: JsonObject, model: ObservationHistory) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val saveForm = viewModelScope.async {
+                val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
+                if (!userId.isNullOrEmpty()) {
+                    observationHistoryUseCase.saveObservationFormFlow(userId, json).collect { api ->
+                        when (api.status) {
+                            APIResult.Status.SUCCESS -> {
+                                api.data?.let {
+                                    //if (it.success){
+                                    it.result.observation_image = model.observation_image
+                                    saveObservationHistory(it.result)
+                                    //}
+                                }
+
+                            }
+
+                            APIResult.Status.ERROR -> {
+                                _observationFormModel.value = false
+                                Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
+                            }
+                        }
+                    }
+                } else {
+                    _observationFormModel.value = false
+                    Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
+                }
+            }
+            saveForm.await()
+
+            val saveImages = viewModelScope.async {
+                val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
+                if (!userId.isNullOrEmpty()) {
+                    val requestBody =
+                        model.temp_observation_number.toRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
+                    observationHistoryUseCase.saveObservationImagesAPIFlow(
+                        prepareFilePart(model.observation_image),
+                        requestBody,
+                        userId
+                    ).collect { api ->
+                        when (api.status) {
+                            APIResult.Status.SUCCESS -> {
+                                api.data?.let {
+                                    Log.d(
+                                        TAG,
+                                        "value - ${api.message}, saveObservationHistoryAPI: ${api.data}"
+                                    )
+                                    _observationFormModel.value = false
+                                    _observationHistoryModel.value = savedId
+                                }
+
+                            }
+
+                            APIResult.Status.ERROR -> {
+                                Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
+                                _observationFormModel.value = false
+                            }
+                        }
+                    }
+                } else {
+                    _observationFormModel.value = false
+                    Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
+                }
+            }
+            saveImages.await()
+        }
+
+
     }
 
     private fun customisedImageList(savedPathList: ArrayList<String>): JsonArray {
@@ -197,8 +288,22 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
 
     private fun saveObservationHistory(model: ObservationHistory) {
         viewModelScope.launch {
-            _observationHistoryModel.value = observationHistoryRepo.insertObservationHistory(model)
+            savedId = observationHistoryRepo.insertObservationHistory(model)
         }
+    }
+
+    private fun prepareFilePart(filePathList: List<String>?): List<MultipartBody.Part> {
+        val list = arrayListOf<MultipartBody.Part>()
+        filePathList?.forEach {
+            val file = File(it)
+            val requestBody = file.asRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
+            val multipart =
+                MultipartBody.Part.createFormData("observation_image[]", file.name, requestBody)
+            list.add(multipart)
+        }
+
+        return list
+
     }
 
     companion object {

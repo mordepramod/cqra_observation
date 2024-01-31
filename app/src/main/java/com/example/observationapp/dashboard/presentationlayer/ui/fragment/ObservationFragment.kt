@@ -31,7 +31,9 @@ import com.example.observationapp.photo_edit.EditImageActivity
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getSelectedDateInString
 import com.example.observationapp.util.Utility.getTimeStampInLong
+import com.example.observationapp.util.gone
 import com.example.observationapp.util.showShortToast
+import com.example.observationapp.util.visible
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -72,6 +74,14 @@ class ObservationFragment : Fragment() {
         /*savedPathList.add("/storage/emulated/0/Pictures/1705822595241.png")
         savedPathList.add("/storage/emulated/0/Pictures/1705822617155.png")*/
         return binding.root
+    }
+
+    private fun showProgress() {
+        binding.llProgress.llProgressBar.visible()
+    }
+
+    private fun hideProgress() {
+        binding.llProgress.llProgressBar.gone()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -258,6 +268,7 @@ class ObservationFragment : Fragment() {
                 requireContext().showShortToast(getString(R.string.no_images_are_selected))
                 return@setOnClickListener
             }
+            showProgress()
             viewModel.saveForm(
                 location,
                 description,
@@ -366,6 +377,18 @@ class ObservationFragment : Fragment() {
             viewModel.observationHistoryModel.observe(viewLifecycleOwner) {
                 it?.let {
                     findNavController().popBackStack()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.observationFormModel.observe(viewLifecycleOwner) {
+                it?.let {
+                    if (it) {
+                        showProgress()
+                    } else {
+                        hideProgress()
+                    }
                 }
             }
         }

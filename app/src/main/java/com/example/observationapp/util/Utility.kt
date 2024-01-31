@@ -22,7 +22,7 @@ object Utility {
 
     fun getTodayDateAndTime(): String {
         val sdf =
-            SimpleDateFormat(CommonConstant.DATE_FORMAT_dd_mm_yyyy_hh_mm_ss, Locale.getDefault())
+            SimpleDateFormat(CommonConstant.DATE_FORMAT_yyyy_dd_mm_hh_mm_ss, Locale.getDefault())
         return sdf.format(Date())
 
     }
@@ -30,12 +30,12 @@ object Utility {
     fun getSelectedDateInString(timestamp: Long): String {
         val calendar = Calendar.getInstance(Locale.getDefault())
         calendar.timeInMillis = timestamp
-        return DateFormat.format(CommonConstant.DATE_FORMAT_dd_mm_yyyy, calendar).toString()
+        return DateFormat.format(CommonConstant.DATE_FORMAT_yyyy_dd_mm, calendar).toString()
 
     }
 
     fun getTimeStampInLong(string: String): Long {
-        val formatter = SimpleDateFormat(CommonConstant.DATE_FORMAT_dd_mm_yyyy, Locale.getDefault())
+        val formatter = SimpleDateFormat(CommonConstant.DATE_FORMAT_yyyy_dd_mm, Locale.getDefault())
         val cal = Calendar.getInstance()
         cal.time = formatter.parse(string) as Date
         cal.add(Calendar.DATE, 1)
