@@ -17,6 +17,9 @@ interface ObservationHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertObservationHistory(model: ObservationHistory): Long
 
+    @Query("UPDATE ${ApplicationDBTables.TABLE_OBSERVATION_HISTORY} SET isImagesUpload = :isImagesUpload WHERE temp_observation_number = :tempId")
+    suspend fun updateObservationHistory(isImagesUpload: Boolean, tempId: String): Int
+
 
     /*******************    Insert Data into DB Ends     ********************/
 

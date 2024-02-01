@@ -12,6 +12,9 @@ class ObservationHistoryDBRepository @Inject constructor(
     suspend fun insertObservationHistory(model: ObservationHistory): Long =
         observationHistoryDao.insertObservationHistory(model)
 
+    suspend fun updateObservationHistory(isImagesUpload: Boolean, tempId: String): Int =
+        observationHistoryDao.updateObservationHistory(isImagesUpload, tempId)
+
     suspend fun getObservationHistoryList(): List<ObservationHistory> =
         observationHistoryDao.getObservationHistoryList()
 

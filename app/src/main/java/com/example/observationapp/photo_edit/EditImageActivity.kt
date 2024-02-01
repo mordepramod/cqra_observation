@@ -19,6 +19,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.annotation.VisibleForTesting
@@ -33,6 +34,7 @@ import com.example.observationapp.R
 import com.example.observationapp.databinding.ActivityEditImageBinding
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility
+import com.example.observationapp.util.showLongToast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -99,6 +101,20 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
         mPhotoEditorView.source.scaleType = ImageView.ScaleType.FIT_XY
 
         mSaveFileHelper = FileSaveHelper(this)
+
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            /* override back pressing */
+            override fun handleOnBackPressed() {
+                //Your code here
+                if (mPhotoEditorView.source.drawable == null) {
+                    showLongToast("Please select image from Gallery or capture an Image.")
+                    finish()
+                } else {
+                    showSaveDialog()
+                }
+
+            }
+        })
     }
 
     private fun makeFullScreen() {
@@ -356,14 +372,6 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
             return
         }
         fragment.show(supportFragmentManager, fragment.tag)
-    }
-
-    override fun onBackPressed() {
-        if (!mPhotoEditor.isCacheEmpty) {
-            showSaveDialog()
-        } else {
-            super.onBackPressed()
-        }
     }
 
     companion object {

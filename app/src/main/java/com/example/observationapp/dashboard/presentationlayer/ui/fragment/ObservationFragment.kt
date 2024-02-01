@@ -8,7 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -73,14 +76,66 @@ class ObservationFragment : Fragment() {
         binding = FragmentObservationBinding.inflate(inflater, container, false)
         /*savedPathList.add("/storage/emulated/0/Pictures/1705822595241.png")
         savedPathList.add("/storage/emulated/0/Pictures/1705822617155.png")*/
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                /* override back pressing */
+                override fun handleOnBackPressed() {
+                    if (isProgressVisible()) {
+                        requireActivity().showShortToast("Please wait until form is saving.")
+                    } else {
+                        findNavController().navigateUp()
+                    }
+
+                }
+            })
         return binding.root
     }
 
     private fun showProgress() {
+        makeBackButtonNonClickable()
+        makeButtonNonClickable()
         binding.llProgress.llProgressBar.visible()
     }
 
+    private fun isProgressVisible(): Boolean {
+        return binding.llProgress.root.isVisible
+    }
+
+    private fun makeBackButtonNonClickable() {
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
+    }
+
+    private fun makeBackButtonClickable() {
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
+    private fun makeButtonNonClickable() {
+        binding.btnSavedForm.apply {
+            isClickable = false
+            isEnabled = false
+        }
+        binding.btnCaptureImages.apply {
+            isClickable = false
+            isEnabled = false
+        }
+    }
+
+    private fun makeButtonClickable() {
+        binding.btnSavedForm.apply {
+            isClickable = true
+            isEnabled = true
+        }
+        binding.btnCaptureImages.apply {
+            isClickable = true
+            isEnabled = true
+        }
+    }
+
     private fun hideProgress() {
+        makeBackButtonClickable()
+        makeButtonClickable()
         binding.llProgress.llProgressBar.gone()
     }
 
@@ -268,7 +323,6 @@ class ObservationFragment : Fragment() {
                 requireContext().showShortToast(getString(R.string.no_images_are_selected))
                 return@setOnClickListener
             }
-            showProgress()
             viewModel.saveForm(
                 location,
                 description,

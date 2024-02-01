@@ -293,6 +293,7 @@
 
 
             <LinearLayout
+                android:id="@+id/llButton"
                 android:layout_marginTop="@dimen/dimen_10dp"
                 android:layout_marginBottom="@dimen/dimen_10dp"
                 android:layout_width="match_parent"

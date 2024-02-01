@@ -171,7 +171,7 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         model.created_by = userId
         model.observation_date = getTodayDateAndTime()
         model.location = location
-        model.target_date = targetDate
+        model.target_date = "$targetDate 00:00:00"
         model.status = statusId
         model.closed_by = closeById
         model.observation_image = savedPathList
@@ -206,6 +206,7 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun saveObservationHistoryAPI(json: JsonObject, model: ObservationHistory) {
+        var isSuccess = false
         viewModelScope.launch(Dispatchers.IO) {
             val saveForm = viewModelScope.async {
                 val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
@@ -215,11 +216,14 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
                             APIResult.Status.SUCCESS -> {
                                 api.data?.let {
                                     //if (it.success){
+                                    Log.e(TAG, "saveObservationHistoryAPI: ${api}")
                                     it.result.observation_image = model.observation_image
                                     saveObservationHistory(it.result)
+                                    isSuccess = true
                                     //}
                                 }
 
+
                             }
 
                             APIResult.Status.ERROR -> {
@@ -228,48 +232,73 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
                             }
                         }
                     }
+                    return@async isSuccess
                 } else {
                     _observationFormModel.value = false
                     Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
+                    return@async false
                 }
             }
-            saveForm.await()
+            val formUploaded = saveForm.await()
+            Log.d(TAG, "saveObservationHistoryAPI: formUploaded - $formUploaded")
+            if (formUploaded) {
+                val saveImages = viewModelScope.async {
+                    val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
+                    if (!userId.isNullOrEmpty()) {
+                        val requestBody =
+                            model.temp_observation_number.toRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
+                        observationHistoryUseCase.saveObservationImagesAPIFlow(
+                            prepareFilePart(model.observation_image),
+                            requestBody,
+                            userId
+                        ).collect { api ->
+                            when (api.status) {
+                                APIResult.Status.SUCCESS -> {
+                                    api.data?.let {
+                                        Log.d(
+                                            TAG,
+                                            "value - ${it.message}, saveObservationHistoryAPI: ${api.data}"
+                                        )
+                                        _observationFormModel.value = false
+                                        _observationHistoryModel.value = savedId
+                                    }
 
-            val saveImages = viewModelScope.async {
-                val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
-                if (!userId.isNullOrEmpty()) {
-                    val requestBody =
-                        model.temp_observation_number.toRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
-                    observationHistoryUseCase.saveObservationImagesAPIFlow(
-                        prepareFilePart(model.observation_image),
-                        requestBody,
-                        userId
-                    ).collect { api ->
-                        when (api.status) {
-                            APIResult.Status.SUCCESS -> {
-                                api.data?.let {
-                                    Log.d(
-                                        TAG,
-                                        "value - ${api.message}, saveObservationHistoryAPI: ${api.data}"
-                                    )
-                                    _observationFormModel.value = false
-                                    _observationHistoryModel.value = savedId
                                 }
 
-                            }
-
-                            APIResult.Status.ERROR -> {
-                                Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
-                                _observationFormModel.value = false
+                                APIResult.Status.ERROR -> {
+                                    Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
+                                    _observationFormModel.value = false
+                                }
                             }
                         }
+                    } else {
+                        _observationFormModel.value = false
+                        Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
                     }
-                } else {
-                    _observationFormModel.value = false
-                    Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
+                }
+                saveImages.await()
+            } else {
+                model.isImagesUpload = false
+                viewModelScope.launch {
+                    val updateModel = viewModelScope.async {
+                        val value = observationHistoryRepo.updateObservationHistory(
+                            model.isImagesUpload,
+                            model.temp_observation_number
+                        )
+                        Log.d(TAG, "saveObservationHistoryAPI: value: $value")
+                        return@async value
+                    }
+                    val updateModelValue = updateModel.await()
+                    Log.d(TAG, "saveObservationHistoryAPI: updateModelValue: $updateModelValue")
+                    if (updateModelValue > 0) {
+                        Log.d(TAG, "saveObservationHistoryAPI: Updated - savedId $savedId")
+                        _observationFormModel.value = false
+                        _observationHistoryModel.value = savedId
+                    } else {
+                        _observationFormModel.value = false
+                    }
                 }
             }
-            saveImages.await()
         }
 
 
@@ -286,10 +315,12 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         return jsonArray
     }
 
-    private fun saveObservationHistory(model: ObservationHistory) {
-        viewModelScope.launch {
+    private suspend fun saveObservationHistory(model: ObservationHistory): Long {
+        return viewModelScope.async {
             savedId = observationHistoryRepo.insertObservationHistory(model)
-        }
+            Log.d(TAG, "inserted saveObservationHistory: savedId: $savedId")
+            return@async savedId
+        }.await()
     }
 
     private fun prepareFilePart(filePathList: List<String>?): List<MultipartBody.Part> {
