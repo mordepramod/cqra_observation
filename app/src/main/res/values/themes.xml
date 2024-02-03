@@ -52,4 +52,8 @@
         <item name="colorControlNormal">@color/md_theme_onTertiary</item>
     </style>
 
+    <style name="fullScreenTheme" parent="Base.Theme.ObservationApp">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>

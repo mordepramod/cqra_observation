@@ -2,7 +2,10 @@ package com.example.observationapp.util
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.text.format.DateFormat
+import com.example.observationapp.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -52,8 +55,19 @@ object Utility {
         return filePath.substring(index, filePath.length)
     }
 
-    fun getLastIndexOfFilePath(filePath: String): Int {
+    private fun getLastIndexOfFilePath(filePath: String): Int {
         return filePath.lastIndexOf('/')
     }
 
+    fun openAppSettings(context: Context) {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        val uri = Uri.fromParts(
+            "package",
+            BuildConfig.APPLICATION_ID, null
+        )
+        intent.data = uri
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
+    }
 }

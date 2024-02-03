@@ -37,8 +37,9 @@
             android:exported="false" />
         <activity
             android:name=".photo_edit.EditImageActivity"
+            android:theme="@style/fullScreenTheme"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="true"></activity>
         <activity
             android:name=".login.presentation.ui.activity.LoginActivity"
             android:exported="true" />

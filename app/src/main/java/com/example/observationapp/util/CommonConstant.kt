@@ -3,6 +3,7 @@ package com.example.observationapp.util
 object CommonConstant {
 
 
+    const val COMMA_STRING: String = ","
     const val MULTIPART: String = "multipart/form-data"
     const val FILE_PATH: String = "filePath"
     const val FILE_NAMES: String = "fileName"

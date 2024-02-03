@@ -41,7 +41,9 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -83,12 +85,20 @@ class ObservationFragment : Fragment() {
                     if (isProgressVisible()) {
                         requireActivity().showShortToast("Please wait until form is saving.")
                     } else {
-                        findNavController().navigateUp()
+                        checkFilesToDelete()
                     }
 
                 }
             })
         return binding.root
+    }
+
+    private fun checkFilesToDelete() {
+        if (savedPathList.isEmpty()) {
+            findNavController().navigateUp()
+        } else {
+            deleteFileIfAny()
+        }
     }
 
     private fun showProgress() {
@@ -653,5 +663,27 @@ class ObservationFragment : Fragment() {
 
     }
 
+    private fun deleteFileIfAny() {
+
+        Log.d(TAG, "deleteFileIfAny: point 1")
+        savedPathList.forEach {
+            val isFileDeleted = lifecycleScope.async {
+                var isFileDeleted = false
+                val file = File(it)
+                if (file.exists()) {
+                    isFileDeleted = file.delete()
+                }
+                return@async isFileDeleted
+            }
+            lifecycleScope.launch {
+                isFileDeleted.await()
+                Log.d(TAG, "deleteFileIfAny: file deleted $it")
+            }
+        }
+        Log.e(TAG, "deleteFileIfAny: point 2")
+        findNavController().navigateUp()
+
+
+    }
 
 }

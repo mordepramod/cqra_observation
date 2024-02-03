@@ -1,5 +1,6 @@
 package com.example.observationapp.photo_edit
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,10 +52,39 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
         }
     }
 
+    fun setList(context: Context) {
+        mToolList.add(
+            ToolModel(
+                context.getString(R.string.shape),
+                R.drawable.ic_oval,
+                ToolType.SHAPE
+            )
+        )
+        mToolList.add(
+            ToolModel(
+                context.getString(R.string.label_text),
+                R.drawable.ic_text,
+                ToolType.TEXT
+            )
+        )
+        mToolList.add(
+            ToolModel(
+                context.getString(R.string.eraser),
+                R.drawable.ic_eraser,
+                ToolType.ERASER
+            )
+        )
+        mToolList.add(
+            ToolModel(
+                context.getString(R.string.rotate),
+                R.drawable.ic_redo,
+                ToolType.ROTATE
+            )
+        )
+        notifyItemRangeInserted(0, mToolList.size)
+    }
+
     init {
-        mToolList.add(ToolModel("Shape", R.drawable.ic_oval, ToolType.SHAPE))
-        mToolList.add(ToolModel("Text", R.drawable.ic_text, ToolType.TEXT))
-        mToolList.add(ToolModel("Eraser", R.drawable.ic_eraser, ToolType.ERASER))
-        mToolList.add(ToolModel("Rotate", R.drawable.ic_redo, ToolType.ROTATE))
+
     }
 }

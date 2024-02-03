@@ -84,4 +84,18 @@
     <string name="select_target_date">Select target date</string>
     <string name="location">Location</string>
     <string name="observation_category">Observation category</string>
+    <string name="shape">Shape</string>
+    <string name="opacity">Opacity</string>
+    <string name="brush">Brush</string>
+    <string name="eraser">Eraser</string>
+    <string name="rotate">Rotate</string>
+    <string name="ok">OK</string>
+    <string name="request_permission">Request Permission!</string>
+    <string name="permission_is_required_to_function_properly">%s permission is required to function properly.</string>
+    <string name="saving">Saving…</string>
+    <string name="storage">Storage</string>
+    <string name="this_permission_is_required_to_pick_a_image_from_storage">This permission is required to pick a image from storage.</string>
+    <string name="storage_permission">Storage Permission</string>
+    <string name="save_image">Save Image</string>
+    <string name="discard">Discard</string>
 </resources>

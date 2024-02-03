@@ -1,13 +1,16 @@
 package com.example.observationapp.photo_edit
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ProgressDialog
+import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,15 +18,12 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresPermission
-import androidx.annotation.VisibleForTesting
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -33,9 +33,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.observationapp.R
 import com.example.observationapp.databinding.ActivityEditImageBinding
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.PermissionEnum
 import com.example.observationapp.util.Utility
+import com.example.observationapp.util.Utility.openAppSettings
+import com.example.observationapp.util.gone
 import com.example.observationapp.util.showLongToast
+import com.example.observationapp.util.visible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
@@ -47,13 +52,19 @@ import ja.burhanrashid52.photoeditor.TextStyleBuilder
 import ja.burhanrashid52.photoeditor.ViewType
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
 import ja.burhanrashid52.photoeditor.shape.ShapeType
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.File
 import java.io.IOException
+
 
 @AndroidEntryPoint
 class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnClickListener,
     ShapeBSFragment.Properties,
     EditingToolsAdapter.OnItemSelected {
+    private var savedFilePath: String = ""
+    private var galleryClicked: Boolean = false
+    private var image_uri: Uri? = null
     private var mAngleRotate = 0f
     lateinit var mPhotoEditor: PhotoEditor
     private lateinit var mPhotoEditorView: PhotoEditorView
@@ -64,9 +75,6 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
     private val mEditingToolsAdapter = EditingToolsAdapter(this)
     private lateinit var mRootView: ConstraintLayout
     private lateinit var binding: ActivityEditImageBinding
-
-    @VisibleForTesting
-    var mSaveImageUri: Uri? = null
 
     private lateinit var mSaveFileHelper: FileSaveHelper
 
@@ -81,6 +89,7 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
         mShapeBSFragment = ShapeBSFragment()
         mShapeBSFragment.setPropertiesChangeListener(this)
 
+        mEditingToolsAdapter.setList(this)
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mRvTools.layoutManager = llmTools
         mRvTools.adapter = mEditingToolsAdapter
@@ -88,13 +97,8 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
         // NOTE(lucianocheng): Used to set integration testing parameters to PhotoEditor
         val pinchTextScalable = intent.getBooleanExtra(PINCH_TEXT_SCALABLE_INTENT_KEY, true)
 
-        //Typeface mTextRobotoTf = ResourcesCompat.getFont(this, R.font.roboto_medium);
-        //Typeface mEmojiTypeFace = Typeface.createFromAsset(getAssets(), "emojione-android.ttf");
-
         mPhotoEditor = PhotoEditor.Builder(this, mPhotoEditorView)
             .setPinchTextScalable(pinchTextScalable) // set flag to make text scalable when pinch
-            //.setDefaultTextTypeface(mTextRobotoTf)
-            //.setDefaultEmojiTypeface(mEmojiTypeFace)
             .build() // build photo editor sdk
 
         mPhotoEditor.setOnPhotoEditorListener(this)
@@ -119,10 +123,6 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
 
     private fun makeFullScreen() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
     }
 
     private fun handleIntentImage(source: ImageView) {
@@ -169,38 +169,80 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
 
     }
 
-    @SuppressLint("NonConstantResourceId", "MissingPermission")
     override fun onClick(view: View) {
         when (view.id) {
             R.id.imgUndo -> mPhotoEditor.undo()
             R.id.imgRedo -> mPhotoEditor.redo()
             R.id.imgCamera -> {
-                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(cameraIntent, CAMERA_REQUEST)
+                val permissionList = arrayListOf<String>()
+                if (!hasPermission(PermissionEnum.CAMERA.permission)) {
+                    permissionList.add(PermissionEnum.CAMERA.permission)
+                }
+                if (!hasPermission(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)) {
+                    permissionList.add(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)
+                }
+                requestCameraPermissionLauncherMulti.launch(permissionList.toTypedArray())
             }
 
             R.id.imgGallery -> {
-                val intent = Intent()
-                intent.type = "image/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_REQUEST)
+                galleryClicked = true
+                if (hasPermission(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)) {
+                    openGallery()
+                } else {
+                    permissionLauncherForStorage.launch(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)
+                }
+
             }
         }
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+    private fun openGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        registerActivityForStorage.launch(Intent.createChooser(intent, "Select Picture"))
+    }
+
+    private fun externalPermissionAlert() {
+        showPermissionAlert(
+            getString(R.string.storage_permission),
+            getString(R.string.this_permission_is_required_to_pick_a_image_from_storage),
+            getString(R.string.ok), getString(R.string.cancel)
+        ) {
+            openAppSettings(this)
+        }
+    }
+
+    private fun showPermissionAlert(
+        title: String,
+        message: String,
+        ok: String,
+        cancel: String,
+        function: () -> Unit
+    ) {
+        val mDialog = MaterialAlertDialogBuilder(this)
+        mDialog.setTitle(title)
+        mDialog.setMessage(message)
+        mDialog.setPositiveButton(
+            ok
+        ) { _, _ ->
+            function.invoke()
+        }
+        mDialog.setNegativeButton(cancel) { _, _ ->
+            Log.d(TAG, "showPermissionAlert: ")
+        }
+        mDialog.show()
+    }
+
     private fun saveImage() {
         val timeStampValue = System.currentTimeMillis().toString()
         val fileName = "$timeStampValue${CommonConstant.FILE_EXTENSIONS}"
-        val hasStoragePermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        val hasStoragePermission = hasPermission(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
-            showLoading("Saving...")
+            showLoading()
             mSaveFileHelper.createFile(fileName, object : FileSaveHelper.OnFileCreateResult {
 
-                @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+                @SuppressLint("MissingPermission")
                 override fun onFileCreateResult(
                     created: Boolean,
                     filePath: String?,
@@ -220,8 +262,7 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                                 mSaveFileHelper.notifyThatFileIsNowPubliclyAvailable(contentResolver)
                                 hideLoading()
                                 showSnackbar("Image Saved Successfully")
-                                mSaveImageUri = uri
-                                mPhotoEditorView.source.setImageURI(mSaveImageUri)
+
                                 Log.d(
                                     TAG,
                                     "onFileCreateResult: ${result.toString()}, filePath: $filePath, fileName: $fileName"
@@ -232,10 +273,15 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                                     TAG,
                                     "onFileCreateResult: truncated str: $string, actualPath: $path"
                                 )
+
+                                savedFilePath = path
                                 val returnIntent = Intent()
                                 returnIntent.putExtra(CommonConstant.FILE_PATH, path)
                                 returnIntent.putExtra(CommonConstant.FILE_NAMES, timeStampValue)
                                 setResult(Activity.RESULT_OK, returnIntent)
+                                if (image_uri != null) {
+                                    deleteFileIfAny()
+                                }
                                 finish()
 
                             } else {
@@ -250,33 +296,7 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                 }
             })
         } else {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-    }
-
-    // TODO(lucianocheng): Replace onActivityResult with Result API from Google
-    //                     See https://developer.android.com/training/basics/intents/result
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                CAMERA_REQUEST -> {
-                    mPhotoEditor.clearAllViews()
-                    val photo = data?.extras?.get("data") as Bitmap?
-                    mPhotoEditorView.source.setImageBitmap(photo)
-                }
-
-                PICK_REQUEST -> try {
-                    mPhotoEditor.clearAllViews()
-                    val uri = data?.data
-                    val bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver, uri
-                    )
-                    mPhotoEditorView.source.setImageBitmap(bitmap)
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
+            requestPermission()
         }
     }
 
@@ -299,21 +319,54 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
         mPhotoEditor.setShape(mShapeBuilder.withShapeType(shapeType))
     }
 
-    @SuppressLint("MissingPermission")
-    fun isPermissionGranted(isGranted: Boolean, permission: String?) {
-        if (isGranted) {
-            saveImage()
-        }
+
+    private fun showSaveDialog() {
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setMessage(getString(R.string.save_image))
+        builder.setPositiveButton(getString(R.string.save)) { _: DialogInterface?, _: Int -> saveImage() }
+        builder.setNegativeButton(getString(R.string.cancel)) { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+        builder.setNeutralButton(getString(R.string.discard)) { _: DialogInterface?, _: Int -> deleteFileIfAny() }//finish() }
+        builder.show()
     }
 
-    @SuppressLint("MissingPermission")
-    private fun showSaveDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Save Image")
-        builder.setPositiveButton("Save") { _: DialogInterface?, _: Int -> saveImage() }
-        builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-        builder.setNeutralButton("Discard") { _: DialogInterface?, _: Int -> finish() }
-        builder.create().show()
+    private fun deleteFileIfAny() {
+
+        try {
+            val isFileDeleted = lifecycleScope.async {
+                var isFileDeleted = false
+                if (image_uri == null) {
+                    isFileDeleted = true
+                } else {
+                    savedFilePath = getRealPathFromURI(this@EditImageActivity, image_uri!!) ?: ""
+                    if (savedFilePath.isNotEmpty()) {
+                        val file = File(savedFilePath)
+                        Log.d(
+                            TAG,
+                            "fileExist = ${file.exists()}, deleteFileIfAny: path: $savedFilePath"
+                        )
+                        if (file.exists()) {
+                            isFileDeleted = file.delete()
+                        }
+                    } else {
+                        isFileDeleted = true
+                    }
+                }
+
+                return@async isFileDeleted
+            }
+            lifecycleScope.launch {
+                if (isFileDeleted.await()) {
+                    finish()
+                } else {
+                    finish()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            finish()
+        }
+
+
     }
 
     override fun onToolSelected(toolType: ToolType) {
@@ -322,7 +375,7 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mTxtCurrentTool.setText("Shape")
+                mTxtCurrentTool.setText(getString(R.string.shape))
                 showBottomSheetDialogFragment(mShapeBSFragment)
             }
 
@@ -421,38 +474,15 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
         Log.d(TAG, "onTouchSourceImage: ")
     }
 
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            isPermissionGranted(it, mPermission)
-        }
-
-    private fun requestPermission(permission: String): Boolean {
-        val isGranted =
-            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-        if (!isGranted) {
-            mPermission = permission
-            permissionLauncher.launch(permission)
-        }
-        return isGranted
-    }
-
-    private var mPermission: String? = null
-
-    protected fun showLoading(message: String) {
-        mProgressDialog = ProgressDialog(this)
-        mProgressDialog?.run {
-            setMessage(message)
-            setProgressStyle(ProgressDialog.STYLE_SPINNER)
-            setCancelable(false)
-            show()
-        }
+    protected fun showLoading() {
+        binding.llProgress.llProgressBar.visible()
+        binding.llProgress.pbText.text = getString(R.string.saving)
     }
 
     protected fun hideLoading() {
-        mProgressDialog?.dismiss()
+        binding.llProgress.llProgressBar.gone()
     }
 
-    private var mProgressDialog: ProgressDialog? = null
     protected fun showSnackbar(message: String) {
         val view = findViewById<View>(android.R.id.content)
         if (view != null) {
@@ -461,4 +491,198 @@ class EditImageActivity : AppCompatActivity(), OnPhotoEditorListener, View.OnCli
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
+
+    /*private fun requestCameraPermission() {
+
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                PermissionEnum.CAMERA.permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+
+                Log.d(TAG, "requestCameraPermission - Camera Permission Granted")
+                openCamera()
+            }
+            shouldShowRequestPermissionRationale(PermissionEnum.CAMERA.permission) -> {
+                Log.d(TAG, "requestCameraPermission - Camera Permission NOT Granted")
+                showPermissionAlert(
+                    "Camera Permission", "This permission is required to camera image.",
+                    "OK","Cancel"
+                ) { requestCameraPermissionLauncher.launch(PermissionEnum.CAMERA.permission) }
+            }
+            else -> {
+
+                showPermissionAlert(
+                    "Camera Permission", "This permission is required to camera image.",
+                    "OK","Cancel"
+                ) {
+                    openAppSettings(this)
+                }
+
+            }
+        }
+    }*/
+
+
+    private val permissionLauncherForStorage =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            it?.let {
+                if (it) {
+                    if (galleryClicked) {
+                        openGallery()
+                        galleryClicked = false
+                    } else {
+                        saveImage()
+                    }
+                } else {
+                    externalPermissionAlert()
+                }
+            }
+
+        }
+
+    private fun requestPermission() {
+        if (!hasPermission(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)) {
+            permissionLauncherForStorage.launch(PermissionEnum.WRITE_EXTERNAL_STORAGE.permission)
+        }
+    }
+
+    private var requestCameraPermissionLauncherMulti =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+            val deniedPermissionList = arrayListOf<String>()
+            granted.entries.forEach {
+                Log.d(TAG, "key: ${it.key} and value: ${it.value} ")
+                if (shouldShowRequestPermissionRationale(it.key)) {
+                    Log.d(TAG, "shouldShowRequestPermissionRationale: ")
+                } else {
+                    if (!it.value) {
+                        when (it.key) {
+                            PermissionEnum.CAMERA.permission -> {
+                                deniedPermissionList.add(getString(R.string.camera))
+                            }
+
+                            PermissionEnum.WRITE_EXTERNAL_STORAGE.permission -> {
+                                deniedPermissionList.add(getString(R.string.storage))
+                            }
+
+                        }
+                    }
+                }
+            }
+            if (deniedPermissionList.isNotEmpty()) {
+                val permissionString =
+                    java.lang.String.join(CommonConstant.COMMA_STRING, deniedPermissionList)
+                showPermissionAlert(
+                    getString(R.string.request_permission),
+                    String.format(
+                        getString(R.string.permission_is_required_to_function_properly),
+                        permissionString
+                    ),
+                    getString(R.string.ok), getString(R.string.cancel)
+                ) {
+                    openAppSettings(this)
+                }
+            } else {
+                openCamera()
+            }
+        }
+
+
+    private var registerActivityForCamera: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == RESULT_OK) {
+                mPhotoEditor.clearAllViews()
+                Log.d(
+                    TAG, "cameraInfo ----: ${it.data?.data?.path}," +
+                            "data: "
+                )
+                var inputImage = uriToBitmap(image_uri!!)
+                inputImage = rotateBitmap(inputImage!!)
+                mPhotoEditorView.source.setImageBitmap(inputImage)
+
+
+            }
+        }
+
+    private var registerActivityForStorage: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == RESULT_OK) {
+                try {
+                    mPhotoEditor.clearAllViews()
+                    val uri = it?.data?.data
+                    val bitmap = MediaStore.Images.Media.getBitmap(
+                        contentResolver, uri
+                    )
+                    mPhotoEditorView.source.setImageBitmap(bitmap)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+    private fun rotateBitmap(input: Bitmap): Bitmap {
+        val orientationColumn =
+            arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val cur =
+            contentResolver.query(image_uri!!, orientationColumn, null, null, null)
+        var orientation = -1
+        if (cur != null && cur.moveToFirst()) {
+            orientation = cur.getInt(cur.getColumnIndexOrThrow(orientationColumn[0]))
+        }
+        Log.d("tryOrientation", orientation.toString() + "")
+        val rotationMatrix = Matrix()
+        rotationMatrix.setRotate(orientation.toFloat())
+        return Bitmap.createBitmap(input, 0, 0, input.width, input.height, rotationMatrix, true)
+    }
+
+    private fun uriToBitmap(selectedFileUri: Uri): Bitmap? {
+        try {
+            val parcelFileDescriptor = contentResolver.openFileDescriptor(selectedFileUri, "r")
+            val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
+            val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+            parcelFileDescriptor.close()
+            return image
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    private fun hasPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun openCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+        image_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
+        registerActivityForCamera.launch(cameraIntent)
+    }
+
+    private fun getRealPathFromURI(context: Context, contentUri: Uri): String? {
+        var cursor: Cursor? = null
+        return try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.contentResolver.query(contentUri, proj, null, null, null)
+            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            cursor.getString(column_index)
+        } catch (e: Exception) {
+            Log.e(TAG, "getRealPathFromURI Exception : $e")
+            ""
+        } finally {
+            cursor?.close()
+        }
+    }
+
 }

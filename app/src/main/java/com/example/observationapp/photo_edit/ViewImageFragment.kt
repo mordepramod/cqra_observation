@@ -42,6 +42,7 @@ class ViewImageFragment : Fragment() {
         imagePath?.forEachIndexed { index, str ->
             if (index == 0) {
                 val imgFile = File(str)
+
                 if (imgFile.exists()) {
 
                     // on below line we are creating an image bitmap variable
