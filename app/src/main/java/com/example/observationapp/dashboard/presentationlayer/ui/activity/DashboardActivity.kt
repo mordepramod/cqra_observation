@@ -9,7 +9,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.observationapp.R
+import com.example.observationapp.backgroundTask.ObservationFormUpload
 import com.example.observationapp.databinding.ActivityDashboardBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +36,22 @@ class DashboardActivity : AppCompatActivity() {
         //navController = (supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment).navController//findNavController(R.id.navHost)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        startPeriodicWorker()
     }
+
+    private fun startPeriodicWorker() {
+        val uploadImages = OneTimeWorkRequestBuilder<ObservationFormUpload>()
+            .setConstraints(
+                Constraints(
+                    requiredNetworkType = NetworkType.CONNECTED
+                )
+            )
+            .build()
+        WorkManager.getInstance(this).enqueue(uploadImages)
+
+    }
+
 
     //below code added --- after theme change app was crashing when user is in
     private fun NavController.navigateSafe(@IdRes resId: Int, args: Bundle? = null) {

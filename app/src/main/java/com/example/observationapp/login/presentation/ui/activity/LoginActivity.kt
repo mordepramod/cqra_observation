@@ -23,7 +23,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         liveDataObservers()
     }
-
     private fun liveDataObservers() {
 
         viewModel.loginUserInfo.observe(this) {
