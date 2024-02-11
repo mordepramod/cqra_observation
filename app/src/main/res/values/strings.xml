@@ -90,6 +90,7 @@
     <string name="eraser">Eraser</string>
     <string name="rotate">Rotate</string>
     <string name="ok">OK</string>
+    <string name="date">Date</string>
     <string name="request_permission">Request Permission!</string>
     <string name="permission_is_required_to_function_properly">%s permission is required to function properly.</string>
     <string name="saving">Saving…</string>

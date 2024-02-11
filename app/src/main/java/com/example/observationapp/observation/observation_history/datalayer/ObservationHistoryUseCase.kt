@@ -35,14 +35,11 @@ class ObservationHistoryUseCase @Inject constructor() {
     suspend fun getObservationHistoryList(): List<ObservationHistory> =
         observationDBRepo.getObservationHistoryList()
 
-    fun saveObservationFormFlow(
+    suspend fun saveObservationFormFlow(
         userId: String,
         json: JsonObject
-    ): Flow<APIResult<SingleObservationHistoryModel>> {
-        return flow {
-            val gdprResponse = observationHistoryRepo.saveObservationFormAPI(userId, json)
-            emit(gdprResponse)
-        }.flowOn(Dispatchers.IO)
+    ): APIResult<SingleObservationHistoryModel> {
+        return observationHistoryRepo.saveObservationFormAPI(userId, json)
     }
 
     fun saveObservationImagesAPIFlow(

@@ -10,9 +10,12 @@ object CommonConstant {
     const val FILE_EXTENSIONS: String = ".png"
     const val DATE_FORMAT_yyyy_dd_mm: String = "yyyy-dd-MM"
     const val DATE_FORMAT_yyyy_dd_mm_hh_mm_ss: String = "yyyy-dd-MM hh:mm:ss"
-    const val BASE_URL = "http://192.168.1.22/"
 
-    //const val BASE_URL = "http://logicsync.in/"
+    //const val BASE_URL = "http://192.168.1.22/"
+    const val FALSE = 0
+    const val TRUE = 1
+
+    const val BASE_URL = "http://logicsync.in/"
     const val CONNECTION_TIMEOUT = 180L
     const val CONNECTION_TIMEOUT_READ = 60L
     const val CONNECTION_TIMEOUT_WRITE = 180L

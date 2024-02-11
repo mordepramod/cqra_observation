@@ -11,16 +11,21 @@ import androidx.core.app.NotificationManagerCompat
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.di.MainNotificationCompactBuilder
 import com.example.observationapp.di.ProgressNotificationCompactBuilder
+import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.observation.observation_history.datalayer.ObservationHistoryUseCase
 import com.example.observationapp.repository.database.ObservationHistoryDBRepository
 import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility.customisedImageList
+import com.example.observationapp.util.Utility.getTodayDateAndTime
 import com.example.observationapp.util.Utility.prepareFilePart
+import com.google.gson.JsonObject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
@@ -34,12 +39,16 @@ class UploadTaskLogic @Inject constructor(
     private val notificationBuilderProgress: NotificationCompat.Builder,
     private val observationHistoryRepo: ObservationHistoryDBRepository,
     private val observationHistoryUseCase: ObservationHistoryUseCase,
-    @Inject private val dataStoreRepoInterface: DataStoreRepoInterface
+    private val dataStoreRepoInterface: DataStoreRepoInterface
 ) {
+    var userId = ""
 
-    /*@Inject
-    @ProgressNotificationCompactBuilder
-    lateinit var notificationBuilderProgress: NotificationCompat.Builder*/
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID) ?: ""
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
     fun showNotification() {
@@ -130,7 +139,6 @@ class UploadTaskLogic @Inject constructor(
 
         Log.d(TAG, "uploadImagesToServer: list: $list")
 
-        val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID) ?: ""
         if (userId.isNotEmpty() && list.isNotEmpty()) {
 
             list.forEachIndexed { index, model ->
@@ -155,7 +163,7 @@ class UploadTaskLogic @Inject constructor(
                             CoroutineScope(Dispatchers.IO).async {
                                 observationHistoryRepo.updateObservationHistory(
                                     true,
-                                    model.temp_observation_number,
+                                    arrayListOf(),
                                     model.primaryObservationId
                                 )
                             }
@@ -177,6 +185,82 @@ class UploadTaskLogic @Inject constructor(
         }
 
 
+    }
+
+    suspend fun uploadFormToServer() {
+        val list = observationHistoryRepo.getOfflineObservationFormHistoryList()
+        Log.d(TAG, "uploadFormToServer: list size: ${list.size}")
+
+        if (userId.isNotEmpty() && list.isNotEmpty()) {
+            list.forEach { model ->
+                val jsonObject = generateJson(model)
+                val value = CoroutineScope(Dispatchers.IO).async {
+                    return@async observationHistoryUseCase.saveObservationFormFlow(
+                        userId,
+                        jsonObject
+                    )
+                }
+                val response = value.await()
+                when (response.status) {
+                    APIResult.Status.SUCCESS -> {
+                        val localData = response.data!!.result
+                        Log.d(TAG, "uploadFormToServer: localData: $localData")
+                        val updatedItem =
+                            CoroutineScope(Dispatchers.IO).async {
+                                observationHistoryRepo.updateFormObservationHistory(
+                                    true,
+                                    localData.observation_number,
+                                    model.primaryObservationId
+                                )
+                            }
+                        Log.e(TAG, "uploadFormToServer: started Update: ")
+                        val item = updatedItem.await()
+
+                        Log.d(TAG, "uploadFormToServer: Upload success, itemNumber: $item")
+                    }
+
+                    APIResult.Status.ERROR -> {
+                        Log.e(TAG, "uploadFormToServer: ${response.message}")
+                    }
+                }
+            }
+        } else {
+            Log.d(TAG, "uploadFormToServer: userID or List is empty")
+        }
+
+    }
+
+    private fun generateJson(model: ObservationHistory): JsonObject {
+        val json = JsonObject()
+        json.addProperty("project_id", model.project_id)
+        json.addProperty("structure_id", model.structure_id)
+        json.addProperty("floors", model.floors)
+        json.addProperty("tradegroup_id", model.tradegroup_id)
+        json.addProperty("activity_id", model.activityOrTradeId)
+        json.addProperty("temp_observation_number", model.temp_observation_number)
+        json.addProperty("observation_category", model.observation_category)
+        json.addProperty("observation_type", model.observation_type)
+        json.addProperty("location", model.location)
+        json.addProperty("description", model.description)
+        json.addProperty("remark", model.remark)
+        json.addProperty("reference", model.reference)
+        json.addProperty("observation_severity", model.observation_severity)
+        json.addProperty("site_representative", model.site_representative)
+        json.addProperty("status", model.status)
+        json.addProperty("closed_by", model.closed_by)
+        json.addProperty("observation_date", getTodayDateAndTime())
+        json.addProperty("target_date", model.target_date)
+        json.add(
+            "observation_image", customisedImageList(
+                model.observation_image,
+                model.project_id,
+                model.structure_id,
+                model.activityOrTradeId,
+                TAG
+            )
+        )
+        Log.d(TAG, "saveForm: $json")
+        return json
     }
 
     companion object {

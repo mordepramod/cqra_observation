@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.text.format.DateFormat
+import android.util.Log
 import com.example.observationapp.BuildConfig
+import com.google.gson.JsonArray
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -54,13 +56,22 @@ object Utility {
         return filePath.substring(0, index)
     }
 
-    fun getFileNameFromPath(filePath: String): String {
-        val index = getLastIndexOfFilePath(filePath)
+    private fun getFileNameFromPath(filePath: String): String {
+        val index = getLastIndexOfFilePath(filePath) + 1
         return filePath.substring(index, filePath.length)
     }
 
     private fun getLastIndexOfFilePath(filePath: String): Int {
         return filePath.lastIndexOf('/')
+    }
+
+    private fun getFileNameWithoutExtension(filePath: String): String {
+        val index = getLastIndexOfFilePathWithDot(filePath)
+        return filePath.substring(0, index)
+    }
+
+    private fun getLastIndexOfFilePathWithDot(filePath: String): Int {
+        return filePath.lastIndexOf('.')
     }
 
     fun openAppSettings(context: Context) {
@@ -85,5 +96,27 @@ object Utility {
             list.add(multipart)
         }
         return list
+    }
+
+    fun customisedImageList(
+        savedPathList: List<String>,
+        projectId: String,
+        structureId: String,
+        tradeId: String,
+        tag: String = ""
+    ): JsonArray {
+        val jsonArray = JsonArray()
+        savedPathList.forEachIndexed { index, path ->
+            val fileNameWithExtension = getFileNameFromPath(path)
+            val fileName = getFileNameWithoutExtension(fileNameWithExtension)
+            Log.d(
+                tag,
+                "customisedImageList: path: $path, fileNameWithExtension: $fileNameWithExtension, fileName: $fileName"
+            )
+            val getFileName =
+                "${projectId}_${structureId}_${tradeId}_${fileName}_${index + 1}${CommonConstant.FILE_EXTENSIONS}"
+            jsonArray.add(getFileName)
+        }
+        return jsonArray
     }
 }

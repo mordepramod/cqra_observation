@@ -14,16 +14,30 @@ class ObservationHistoryDBRepository @Inject constructor(
 
     suspend fun updateObservationHistory(
         isImagesUpload: Boolean,
-        tempId: String,
+        observationImage: List<String>,
         primaryId: Int
     ): Int =
-        observationHistoryDao.updateObservationHistory(isImagesUpload, tempId, primaryId)
+        observationHistoryDao.updateObservationHistory(isImagesUpload, observationImage, primaryId)
+
+    suspend fun updateFormObservationHistory(
+        isFormUpload: Boolean,
+        observationNumber: String,
+        primaryId: Int
+    ): Int =
+        observationHistoryDao.updateFormObservationHistory(
+            isFormUpload,
+            observationNumber,
+            primaryId
+        )
 
     suspend fun getObservationHistoryList(): List<ObservationHistory> =
         observationHistoryDao.getObservationHistoryList()
 
     suspend fun getOfflineObservationHistoryList(): List<ObservationHistory> =
         observationHistoryDao.getOfflineObservationHistoryList()
+
+    suspend fun getOfflineObservationFormHistoryList(): List<ObservationHistory> =
+        observationHistoryDao.getOfflineObservationFormHistoryList()
 
     suspend fun deleteAllObservationHistory(): Int =
         observationHistoryDao.deleteAllObservationHistory()

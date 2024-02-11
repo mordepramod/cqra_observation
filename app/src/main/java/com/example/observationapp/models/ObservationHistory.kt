@@ -29,7 +29,7 @@ data class ObservationHistory(
     var structure_id: String = "",
     var target_date: String = "",
     var tradegroup_id: String = "",
-    var observation_image: List<String>? = arrayListOf(),
+    var observation_image: List<String> = arrayListOf(),
     @PrimaryKey(autoGenerate = true)
     var primaryObservationId: Int = 0,
     var temp_observation_number: String = "",
@@ -44,7 +44,7 @@ data class ObservationHistory(
 
     ) {
     var isOffline: Boolean = false
-    var isImagesUpload: Boolean = false
+    var isImagesUpload: Boolean = true
     override fun toString(): String {
         return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, temp_observation_number: $temp_observation_number, images: $observation_image. isImagesUpload: $isImagesUpload  "
         // return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors=$floors, location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image='$observation_image', tempObservationId='$temp_observation_number')"

@@ -16,12 +16,127 @@
         app:cardElevation="@dimen/dimen_5dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:padding="@dimen/dimen_10dp"
-            android:id="@+id/tvObservationTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="loreal ipsum" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:padding="@dimen/dimen_10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_weight=".3"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="@string/description" />
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tvObservationTitleDescription"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="match_parent"
+                    android:paddingStart="@dimen/dimen_5dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@drawable/customborder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:padding="@dimen/dimen_10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_weight=".3"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="@string/remark" />
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tvObservationRemark"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="match_parent"
+                    android:paddingStart="@dimen/dimen_5dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/remark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@drawable/customborder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:padding="@dimen/dimen_10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_weight=".3"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="@string/location" />
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tvObservationLocation"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="match_parent"
+                    android:paddingStart="@dimen/dimen_5dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/location" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@drawable/customborder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:padding="@dimen/dimen_10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_weight=".3"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="@string/date" />
+
+                <TextView
+                    android:background="@drawable/customborder"
+                    android:gravity="center_vertical"
+                    android:id="@+id/tvObservationDate"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="match_parent"
+                    android:paddingStart="@dimen/dimen_5dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/date" />
+            </LinearLayout>
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

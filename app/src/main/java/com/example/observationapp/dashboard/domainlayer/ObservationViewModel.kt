@@ -23,19 +23,13 @@ import com.example.observationapp.observation.observation_history.datalayer.Obse
 import com.example.observationapp.repository.database.ObservationHistoryDBRepository
 import com.example.observationapp.repository.database.ObservationListDBRepository
 import com.example.observationapp.repository.database.ProjectDBRepository
-import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getTodayDateAndTime
-import com.example.observationapp.util.Utility.prepareFilePart
 import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 
@@ -173,37 +167,45 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         model.status = statusId
         model.closed_by = closeById
         model.observation_image = savedPathList
+        model.observation_category = observationCategoryId
         model.temp_observation_number = System.currentTimeMillis().toString()
+        model.isOffline = true
+        model.isImagesUpload = false
         Log.d(TAG, "saveForm: model : $model")
 
-        val json = JsonObject()
-        json.addProperty("project_id", projectId)
-        json.addProperty("structure_id", structureId)
-        json.addProperty("floors", stageOrFloorId)
-        json.addProperty("tradegroup_id", tradeGroupId)
-        json.addProperty("activity_id", tradeId)
-        json.addProperty("temp_observation_number", model.temp_observation_number)
-        json.addProperty("observation_category", observationCategoryId)
-        json.addProperty("observation_type", observationTypeId)
-        json.addProperty("location", location)
-        json.addProperty("description", description)
-        json.addProperty("remark", remark)
-        json.addProperty("reference", reference)
-        json.addProperty("observation_severity", observationSeverityId)
-        json.addProperty("site_representative", accountableId)
-        json.addProperty("status", statusId)
-        json.addProperty("closed_by", closeById)
-        json.addProperty("observation_date", getTodayDateAndTime())
-        json.addProperty("target_date", targetDate)
-        json.add("observation_image", customisedImageList(savedFileNameList))
-        Log.d(TAG, "saveForm: $json")
+        /*        val json = JsonObject()
+                json.addProperty("project_id", projectId)
+                json.addProperty("structure_id", structureId)
+                json.addProperty("floors", stageOrFloorId)
+                json.addProperty("tradegroup_id", tradeGroupId)
+                json.addProperty("activity_id", tradeId)
+                json.addProperty("temp_observation_number", model.temp_observation_number)
+                json.addProperty("observation_category", observationCategoryId)
+                json.addProperty("observation_type", observationTypeId)
+                json.addProperty("location", location)
+                json.addProperty("description", description)
+                json.addProperty("remark", remark)
+                json.addProperty("reference", reference)
+                json.addProperty("observation_severity", observationSeverityId)
+                json.addProperty("site_representative", accountableId)
+                json.addProperty("status", statusId)
+                json.addProperty("closed_by", closeById)
+                json.addProperty("observation_date", getTodayDateAndTime())
+                json.addProperty("target_date", targetDate)
+                json.add("observation_image", customisedImageList(savedFileNameList))
+                Log.d(TAG, "saveForm: $json")*/
 
-        saveObservationHistoryAPI(json, model)
+        //saveObservationHistoryAPI(json, model)
 
-        //saveObservationHistory(model)
+        viewModelScope.launch {
+            _observationFormModel.value = false
+            val value = saveObservationHistory(model)
+            Log.d(TAG, "saveFormID : $value")
+            _observationHistoryModel.value = value
+        }
     }
 
-    private fun saveObservationHistoryAPI(json: JsonObject, model: ObservationHistory) {
+    /*private fun saveObservationHistoryAPI(json: JsonObject, model: ObservationHistory) {
         var isSuccess = false
         viewModelScope.launch(Dispatchers.IO) {
             val saveForm = viewModelScope.async {
@@ -301,13 +303,13 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         }
 
 
-    }
+    }*/
 
     private fun customisedImageList(savedPathList: ArrayList<String>): JsonArray {
         val jsonArray = JsonArray()
         savedPathList.forEachIndexed { index, path ->
             val getFileName =
-                "${projectId}_${structureId}_${tradeId}_${path}_${index + 1}${CommonConstant.FILE_EXTENSIONS}"
+                "${projectId}_${structureId}_${tradeId}_${path}_${index + 1}"
             jsonArray.add(getFileName)
         }
 
