@@ -17,14 +17,21 @@ interface ObservationHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertObservationHistory(model: ObservationHistory): Long
 
-    @Query("UPDATE ${ApplicationDBTables.TABLE_OBSERVATION_HISTORY} SET isImagesUpload = :isImagesUpload WHERE temp_observation_number = :tempId")
-    suspend fun updateObservationHistory(isImagesUpload: Boolean, tempId: String): Int
+    @Query("UPDATE ${ApplicationDBTables.TABLE_OBSERVATION_HISTORY} SET isImagesUpload = :isImagesUpload WHERE temp_observation_number = :tempId AND primaryObservationId = :primaryId")
+    suspend fun updateObservationHistory(
+        isImagesUpload: Boolean,
+        tempId: String,
+        primaryId: Int
+    ): Int
 
 
     /*******************    Insert Data into DB Ends     ********************/
 
 
     /*******************    Get Data from DB Starts     ********************/
+    @Query("SELECT * FROM ${ApplicationDBTables.TABLE_OBSERVATION_HISTORY} WHERE isImagesUpload = 0 AND observation_image != \"[]\" ")
+    suspend fun getOfflineObservationHistoryList(): List<ObservationHistory>
+
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_OBSERVATION_HISTORY}")
     suspend fun getObservationHistoryList(): List<ObservationHistory>
 

@@ -8,6 +8,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.observationapp.R
 import com.example.observationapp.backgroundTask.UploadTaskLogic
+import com.example.observationapp.observation.observation_history.datalayer.ObservationHistoryUseCase
+import com.example.observationapp.repository.database.ObservationHistoryDBRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,13 +79,17 @@ object NotificationModule {
         @MainNotificationCompactBuilder
         notificationBuilder: NotificationCompat.Builder,
         @ProgressNotificationCompactBuilder
-        notificationBuilderProgress: NotificationCompat.Builder
+        notificationBuilderProgress: NotificationCompat.Builder,
+        observationHistoryRepo: ObservationHistoryDBRepository,
+        observationHistoryUseCase: ObservationHistoryUseCase,
+        dataStoreRepoInterface: DataStoreRepoInterface
     ): UploadTaskLogic {
         return UploadTaskLogic(
             context,
             notificationManager,
             notificationBuilder,
-            notificationBuilderProgress
+            notificationBuilderProgress,
+            observationHistoryRepo, observationHistoryUseCase, dataStoreRepoInterface
         )
     }
 }

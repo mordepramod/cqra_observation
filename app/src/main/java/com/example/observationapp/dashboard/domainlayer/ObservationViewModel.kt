@@ -26,6 +26,7 @@ import com.example.observationapp.repository.database.ProjectDBRepository
 import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getTodayDateAndTime
+import com.example.observationapp.util.Utility.prepareFilePart
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,10 +35,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 
 
@@ -278,12 +276,13 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
                 }
                 saveImages.await()
             } else {
-                model.isImagesUpload = false
+                //model.isImagesUpload = false
                 viewModelScope.launch {
                     val updateModel = viewModelScope.async {
                         val value = observationHistoryRepo.updateObservationHistory(
                             model.isImagesUpload,
-                            model.temp_observation_number
+                            model.temp_observation_number,
+                            model.primaryObservationId
                         )
                         Log.d(TAG, "saveObservationHistoryAPI: value: $value")
                         return@async value
@@ -323,17 +322,25 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         }.await()
     }
 
-    private fun prepareFilePart(filePathList: List<String>?): List<MultipartBody.Part> {
-        val list = arrayListOf<MultipartBody.Part>()
-        filePathList?.forEach {
-            val file = File(it)
-            val requestBody = file.asRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
-            val multipart =
-                MultipartBody.Part.createFormData("observation_image[]", file.name, requestBody)
-            list.add(multipart)
-        }
 
-        return list
+    fun addDummyEntry() {
+        viewModelScope.launch {
+            val list = arrayListOf<ObservationHistory>()
+            for (i in 1..15) {
+                val model = ObservationHistory()
+                val savedPathList = arrayListOf<String>()
+                if (i % 2 == 0) {
+                    savedPathList.add("/storage/emulated/0/Pictures/1706992666110.png")
+                } else {
+                    savedPathList.add("/storage/emulated/0/Pictures/1706992686807.png")
+                }
+                model.observation_image = savedPathList
+                model.temp_observation_number = "7887686856"
+                list.add(model)
+            }
+            val saveHistory = observationHistoryRepo.saveObservationHistoryList(list)
+            Log.d(TAG, "addDummyEntry: saveHistory: $saveHistory")
+        }
 
     }
 

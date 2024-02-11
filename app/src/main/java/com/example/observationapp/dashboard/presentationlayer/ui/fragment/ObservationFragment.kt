@@ -90,6 +90,10 @@ class ObservationFragment : Fragment() {
 
                 }
             })
+
+        //viewModel.addDummyEntry()
+
+
         return binding.root
     }
 

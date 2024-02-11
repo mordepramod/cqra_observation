@@ -10,11 +10,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.observationapp.R
-import com.example.observationapp.backgroundTask.ObservationFormUpload
+import com.example.observationapp.backgroundTask.ObservationFormUploadWorker
 import com.example.observationapp.databinding.ActivityDashboardBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,14 +42,15 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun startPeriodicWorker() {
-        val uploadImages = OneTimeWorkRequestBuilder<ObservationFormUpload>()
+        val uploadImages = OneTimeWorkRequestBuilder<ObservationFormUploadWorker>()
             .setConstraints(
                 Constraints(
                     requiredNetworkType = NetworkType.CONNECTED
                 )
             )
             .build()
-        WorkManager.getInstance(this).enqueue(uploadImages)
+        WorkManager.getInstance(this)
+            .enqueueUniqueWork("uploadImageTask", ExistingWorkPolicy.REPLACE, uploadImages)
 
     }
 

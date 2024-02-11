@@ -6,6 +6,10 @@ import android.net.Uri
 import android.provider.Settings
 import android.text.format.DateFormat
 import com.example.observationapp.BuildConfig
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -69,5 +73,17 @@ object Utility {
         intent.data = uri
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
+    }
+
+    fun prepareFilePart(filePathList: List<String>?): List<MultipartBody.Part> {
+        val list = arrayListOf<MultipartBody.Part>()
+        filePathList?.forEach {
+            val file = File(it)
+            val requestBody = file.asRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
+            val multipart =
+                MultipartBody.Part.createFormData("observation_image", file.name, requestBody)
+            list.add(multipart)
+        }
+        return list
     }
 }

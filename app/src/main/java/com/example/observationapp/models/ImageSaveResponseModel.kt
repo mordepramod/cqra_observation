@@ -2,7 +2,7 @@ package com.example.observationapp.models
 
 data class ImageSaveResponseModel(
     val message: String,
-    val result: List<String>,
+    val result: String,
     val success: Boolean
 ) {
     override fun toString(): String {

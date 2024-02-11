@@ -57,6 +57,14 @@ class ObservationHistoryUseCase @Inject constructor() {
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun saveObservationImagesAPI(
+        surveyImage: List<MultipartBody.Part>,
+        tempObsId: RequestBody,
+        userId: String
+    ): APIResult<ImageSaveResponseModel> {
+        return observationHistoryRepo.saveObservationImagesAPI(surveyImage, tempObsId, userId)
+    }
+
     fun getObservationHistoryListFlow(userId: String): Flow<APIResult<ObservationHistoryModel>> {
         return flow {
             val gdprResponse = observationHistoryRepo.getObservationHistoryAPI(userId)

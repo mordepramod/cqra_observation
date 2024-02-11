@@ -8,11 +8,21 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.di.MainNotificationCompactBuilder
 import com.example.observationapp.di.ProgressNotificationCompactBuilder
+import com.example.observationapp.observation.observation_history.datalayer.ObservationHistoryUseCase
+import com.example.observationapp.repository.database.ObservationHistoryDBRepository
+import com.example.observationapp.util.APIResult
+import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility.prepareFilePart
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class UploadTaskLogic @Inject constructor(
@@ -21,7 +31,10 @@ class UploadTaskLogic @Inject constructor(
     @MainNotificationCompactBuilder
     private val notificationBuilder: NotificationCompat.Builder,
     @ProgressNotificationCompactBuilder
-    private val notificationBuilderProgress: NotificationCompat.Builder
+    private val notificationBuilderProgress: NotificationCompat.Builder,
+    private val observationHistoryRepo: ObservationHistoryDBRepository,
+    private val observationHistoryUseCase: ObservationHistoryUseCase,
+    @Inject private val dataStoreRepoInterface: DataStoreRepoInterface
 ) {
 
     /*@Inject
@@ -62,24 +75,32 @@ class UploadTaskLogic @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun updateNotification() {
+    fun updateNotification(title: String, message: String = "") {
         if (checkPermissionFunction()) {
             notificationManager.notify(
                 15,
-                notificationBuilder.setContentTitle("New Upload form").build()
+                notificationBuilder
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setProgress(0, 0, false)
+                    .build()
             )
         }
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun showProgress() {
+    suspend fun showProgress(
+        max: Int = 0,
+        progress: Int = 0,
+        isProgress: Boolean = false,
+        isSuccess: Boolean = true
+    ) {
         if (checkPermissionFunction()) {
-            val max = 10
-            var progress = 0
+            /*val max = 10
+            var progress = 0*/
+
             coroutineScope {
-                while (progress != max) {
-                    delay(2000)
-                    progress += 1
+                if (isProgress) {
                     notificationManager.notify(
                         15,
                         notificationBuilderProgress
@@ -89,16 +110,73 @@ class UploadTaskLogic @Inject constructor(
                             .build()
 
                     )
+                } else {
+                    notificationManager.notify(
+                        15,
+                        notificationBuilder
+                            .setProgress(0, 0, false)
+                            .build()
+                    )
                 }
-                notificationManager.notify(
-                    15,
-                    notificationBuilder
-                        .setProgress(0, 0, false)
-                        .build()
-                )
+
+
             }
 
         }
+    }
+
+    suspend fun uploadImagesToServer() {
+        val list = observationHistoryRepo.getOfflineObservationHistoryList()
+
+        Log.d(TAG, "uploadImagesToServer: list: $list")
+
+        val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID) ?: ""
+        if (userId.isNotEmpty() && list.isNotEmpty()) {
+
+            list.forEachIndexed { index, model ->
+                showProgress(list.size, index + 1, true)
+                val requestBody =
+                    model.temp_observation_number.toRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
+                val value = CoroutineScope(Dispatchers.IO).async {
+                    val value = observationHistoryUseCase.saveObservationImagesAPI(
+                        prepareFilePart(model.observation_image),
+                        requestBody,
+                        userId
+                    )
+                    return@async value.status
+                }
+                when (value.await()) {
+                    APIResult.Status.SUCCESS -> {
+                        Log.d(
+                            TAG,
+                            "uploadImagesToServer: loop count, $index, tmp: ${model.temp_observation_number}, primartId: ${model.primaryObservationId}"
+                        )
+                        val updatedItem =
+                            CoroutineScope(Dispatchers.IO).async {
+                                observationHistoryRepo.updateObservationHistory(
+                                    true,
+                                    model.temp_observation_number,
+                                    model.primaryObservationId
+                                )
+                            }
+                        Log.e(TAG, "uploadImagesToServer: started Update: ")
+                        val item = updatedItem.await()
+
+                        Log.d(TAG, "uploadImagesToServer: updatedId: $item")
+                    }
+
+                    APIResult.Status.ERROR -> {
+                        Log.e(TAG, "uploadImagesToServer: error")
+                    }
+                }
+            }
+            Log.d(TAG, "uploadImagesToServer: exit loop")
+            showProgress()
+        } else {
+            Log.e(TAG, "saveObservationHistoryAPI: userID or List is empty")
+        }
+
+
     }
 
     companion object {
