@@ -1,7 +1,7 @@
 <resources>
-    <!-- Base application theme. -->
+    <!--&lt;!&ndash; Base application theme. &ndash;&gt;
     <style name="Base.Theme.ObservationApp" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Customize your dark theme here. -->
+        &lt;!&ndash; Customize your dark theme here. &ndash;&gt;
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -29,16 +29,16 @@
         <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
 
-        <!--<item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
-        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>-->
+        <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
     </style>
 
-    <style name="Theme.ObservationApp" parent="Base.Theme.ObservationApp" />
+   &lt;!&ndash; <style name="Theme.ObservationApp" parent="Base.Theme.ObservationApp" />&ndash;&gt;
 
     <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
-        <!-- Change the background color of the AppBarLayout so the AppBarLayout is green.
-                The toolbar is transparent by default so you will see this color through the toolbar. -->
-        <item name="android:background">@color/md_theme_onPrimary</item>
+        &lt;!&ndash; Change the background color of the AppBarLayout so the AppBarLayout is green.
+                The toolbar is transparent by default so you will see this color through the toolbar. &ndash;&gt;
+        <item name="android:background">@color/toolbarColor</item>
     </style>
 
     <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
@@ -48,7 +48,7 @@
     </style>
 
     <style name="ThemeOverlay.App.Toolbar" parent="">
-        <!-- Tint the menu and overflow icons -->
+        &lt;!&ndash; Tint the menu and overflow icons &ndash;&gt;
         <item name="colorControlNormal">@color/md_theme_onTertiary</item>
-    </style>
+    </style>-->
 </resources>

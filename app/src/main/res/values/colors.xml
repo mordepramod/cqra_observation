@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="md_theme_primary">#006C48</color>
+    <color name="md_theme_primary">#ffbd59</color>
     <color name="md_theme_primary_">#27006C48</color>
     <color name="md_theme_onPrimary">#FFFFFF</color>
-    <color name="md_theme_primaryContainer">#8DF7C2</color>
+    <color name="md_theme_primaryContainer">#ffbd59</color>
     <color name="md_theme_onPrimaryContainer">#002113</color>
     <color name="md_theme_secondary">#006C49</color>
     <color name="md_theme_onSecondary">#FFFFFF</color>
@@ -34,6 +34,9 @@
     <color name="md_theme_onSurfaceVariant">#404943</color>
     <color name="semi_black_transparent">#99000000</color>
     <color name="tool_bg">#151414</color>
+    <color name="toolbarColor">#ffbd59</color>
+    <color name="titleBarColor">#ffbd59</color>
+    <color name="viewBackGroundColor">#f4f6f9</color>
 
     <!--Color picker colors-->
 
