@@ -1,6 +1,5 @@
 package com.example.observationapp.repository.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -47,25 +46,25 @@ interface ObservationDao {
 
     /*******************    Get Data from DB Starts     ********************/
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_TRADE_GROUP}")
-    fun getTradeGroupList(): LiveData<List<TradeGroupModel>>
+    fun getTradeGroupList(): List<TradeGroupModel>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_OBSERVATION_TYPE}")
-    fun getObservationTypeList(): LiveData<List<ObservationType>>
+    fun getObservationTypeList(): List<ObservationType>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_OBSERVATION_CATEGORY}")
-    fun getObservationCategoryList(): LiveData<List<ObservationCategory>>
+    fun getObservationCategoryList(): List<ObservationCategory>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_OBSERVATION_SEVERITY}")
-    fun getObservationSeverityList(): LiveData<List<ObservationSeverity>>
+    fun getObservationSeverityList(): List<ObservationSeverity>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_ACCOUNTABLE}")
-    fun getAccountableList(): LiveData<List<Accountable>>
+    fun getAccountableList(): List<Accountable>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_ALLOCATED_TO}")
-    fun getAllocatedToList(): LiveData<List<AllocatedToModel>>
+    fun getAllocatedToList(): List<AllocatedToModel>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_STATUS}")
-    fun getAllStatusToList(): LiveData<List<StatusModel>>
+    fun getAllStatusToList(): List<StatusModel>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_TRADE_MODEL} WHERE tradegroup_id = :tradeGroupId")
     suspend fun getTradeModelList(tradeGroupId: String): List<TradeModel>

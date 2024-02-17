@@ -25,12 +25,14 @@ import com.example.observationapp.repository.database.ObservationListDBRepositor
 import com.example.observationapp.repository.database.ProjectDBRepository
 import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.Utility.getTodayDateAndTime
-import com.google.gson.JsonArray
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.ContinuationInterceptor
 
 
 @HiltViewModel
@@ -53,6 +55,30 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     lateinit var observationHistoryUseCase: ObservationHistoryUseCase
 
     private var userId = ""
+
+    private var _projectList = MutableLiveData<List<ProjectModelItem>>()
+    var projectList: LiveData<List<ProjectModelItem>> = _projectList
+
+    private var _observationTypeList = MutableLiveData<List<ObservationType>>()
+    var observationTypeModelList: LiveData<List<ObservationType>> = _observationTypeList
+
+    private var _observationCategoryList = MutableLiveData<List<ObservationCategory>>()
+    var observationCategoryModelList: LiveData<List<ObservationCategory>> = _observationCategoryList
+
+    private var _observationSeverityList = MutableLiveData<List<ObservationSeverity>>()
+    var observationSeverList: LiveData<List<ObservationSeverity>> = _observationSeverityList
+
+    private var _accountableList = MutableLiveData<List<Accountable>>()
+    var accountableModelList: LiveData<List<Accountable>> = _accountableList
+
+    private var _allocatedToModelList = MutableLiveData<List<AllocatedToModel>>()
+    var allocatedlList: LiveData<List<AllocatedToModel>> = _allocatedToModelList
+
+    private var _statusModelList = MutableLiveData<List<StatusModel>>()
+    var statusModelList: LiveData<List<StatusModel>> = _statusModelList
+
+    private var _tradeGroupModelList = MutableLiveData<List<TradeGroupModel>>()
+    var tradeGroupModelList: LiveData<List<TradeGroupModel>> = _tradeGroupModelList
 
     private var _structureList = MutableLiveData<List<StructureModel>>()
     var structureList: LiveData<List<StructureModel>> = _structureList
@@ -81,47 +107,161 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     var closeById = ""
     var statusId = ""
 
-    fun getProjectList(): LiveData<List<ProjectModelItem>> {
-        return projectDBRepository.projectList
+    fun getProjectList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d(
+                TAG,
+                "getProjectList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+            )
+            val result = projectDBRepository.getProjectList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getProjectList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _projectList.value = result
+            }
+        }
+
     }
 
     fun getStructureList(projectId: String) {
         if (projectId.isNotEmpty()) {
-            viewModelScope.launch {
-                _structureList.value = projectDBRepository.getStructureList(projectId)
+            viewModelScope.launch(Dispatchers.IO) {
+                Log.d(
+                    TAG,
+                    "getStructureList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                val result = projectDBRepository.getStructureList(projectId)
+                withContext(Dispatchers.Main) {
+                    Log.d(
+                        TAG,
+                        "getStructureList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                    )
+                    _structureList.value = result
+                }
             }
         }
     }
 
     fun getStageOrFloorList(structureId: String) {
         if (structureId.isNotEmpty()) {
-            viewModelScope.launch {
-                _stageOrFloorList.value = projectDBRepository.getStageOrFloorList(structureId)
+            viewModelScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Main) {
+                    Log.d(
+                        TAG,
+                        "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                    )
+                    _stageOrFloorList.value = projectDBRepository.getStageOrFloorList(structureId)
+                }
             }
         }
     }
 
-    fun getTradeGroupList(): LiveData<List<TradeGroupModel>> = observationDBRepo.getTradeGroupList()
+    fun getTradeGroupList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = observationDBRepo.getTradeGroupList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _tradeGroupModelList.value = result
+            }
+        }
 
-    fun getObservationTypeList(): LiveData<List<ObservationType>> =
-        observationDBRepo.getObservationTypeList()
+    }
 
-    fun getObservationCategoryList(): LiveData<List<ObservationCategory>> =
-        observationDBRepo.getObservationCategoryList()
+    fun getObservationTypeList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = observationDBRepo.getObservationTypeList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _observationTypeList.value = result
+            }
+        }
+    }
 
-    fun getObservationSeverityList(): LiveData<List<ObservationSeverity>> =
-        observationDBRepo.getObservationSeverityList()
 
-    fun getAccountableList(): LiveData<List<Accountable>> = observationDBRepo.getAccountableList()
+    fun getObservationCategoryList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = observationDBRepo.getObservationCategoryList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _observationCategoryList.value = result
+            }
+        }
+    }
 
-    fun getAllocatedToList(): LiveData<List<AllocatedToModel>> =
-        observationDBRepo.getAllocatedToList()
+    fun getObservationSeverityList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = observationDBRepo.getObservationSeverityList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _observationSeverityList.value = result
+            }
+        }
 
-    fun getAllStatusList(): LiveData<List<StatusModel>> = observationDBRepo.getAllStatusList()
+    }
+
+    fun getAccountableList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result =
+                observationDBRepo.getAccountableList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _accountableList.value = result
+            }
+        }
+    }
+
+    fun getAllocatedToList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result =
+                observationDBRepo.getAllocatedToList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _allocatedToModelList.value = result
+            }
+        }
+    }
+
+    fun getAllStatusList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result =
+                observationDBRepo.getAllStatusList()
+            withContext(Dispatchers.Main) {
+                Log.d(
+                    TAG,
+                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
+                _statusModelList.value = result
+            }
+        }
+    }
 
     fun getTradeModelList(tradeGroupId: String) {
         if (tradeGroupId.isNotEmpty()) {
             viewModelScope.launch {
+                Log.d(
+                    TAG,
+                    "getTradeModelList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
+                )
                 _tradeModelList.value = observationDBRepo.getTradeModelList(tradeGroupId)
             }
         }
@@ -144,8 +284,7 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         remark: String,
         reference: String,
         targetDate: String,
-        savedPathList: ArrayList<String>,
-        savedFileNameList: ArrayList<String>,
+        savedPathList: ArrayList<String>
     ) {
         _observationFormModel.value = true
         val model = ObservationHistory()
@@ -173,30 +312,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         model.isImagesUpload = false
         Log.d(TAG, "saveForm: model : $model")
 
-        /*        val json = JsonObject()
-                json.addProperty("project_id", projectId)
-                json.addProperty("structure_id", structureId)
-                json.addProperty("floors", stageOrFloorId)
-                json.addProperty("tradegroup_id", tradeGroupId)
-                json.addProperty("activity_id", tradeId)
-                json.addProperty("temp_observation_number", model.temp_observation_number)
-                json.addProperty("observation_category", observationCategoryId)
-                json.addProperty("observation_type", observationTypeId)
-                json.addProperty("location", location)
-                json.addProperty("description", description)
-                json.addProperty("remark", remark)
-                json.addProperty("reference", reference)
-                json.addProperty("observation_severity", observationSeverityId)
-                json.addProperty("site_representative", accountableId)
-                json.addProperty("status", statusId)
-                json.addProperty("closed_by", closeById)
-                json.addProperty("observation_date", getTodayDateAndTime())
-                json.addProperty("target_date", targetDate)
-                json.add("observation_image", customisedImageList(savedFileNameList))
-                Log.d(TAG, "saveForm: $json")*/
-
-        //saveObservationHistoryAPI(json, model)
-
         viewModelScope.launch {
             _observationFormModel.value = false
             val value = saveObservationHistory(model)
@@ -205,116 +320,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    /*private fun saveObservationHistoryAPI(json: JsonObject, model: ObservationHistory) {
-        var isSuccess = false
-        viewModelScope.launch(Dispatchers.IO) {
-            val saveForm = viewModelScope.async {
-                val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
-                if (!userId.isNullOrEmpty()) {
-                    observationHistoryUseCase.saveObservationFormFlow(userId, json).collect { api ->
-                        when (api.status) {
-                            APIResult.Status.SUCCESS -> {
-                                api.data?.let {
-                                    //if (it.success){
-                                    Log.e(TAG, "saveObservationHistoryAPI: ${api}")
-                                    it.result.observation_image = model.observation_image
-                                    saveObservationHistory(it.result)
-                                    isSuccess = true
-                                    //}
-                                }
-
-
-                            }
-
-                            APIResult.Status.ERROR -> {
-                                _observationFormModel.value = false
-                                Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
-                            }
-                        }
-                    }
-                    return@async isSuccess
-                } else {
-                    _observationFormModel.value = false
-                    Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
-                    return@async false
-                }
-            }
-            val formUploaded = saveForm.await()
-            Log.d(TAG, "saveObservationHistoryAPI: formUploaded - $formUploaded")
-            if (formUploaded) {
-                val saveImages = viewModelScope.async {
-                    val userId = dataStoreRepoInterface.getString(CommonConstant.USER_ID)
-                    if (!userId.isNullOrEmpty()) {
-                        val requestBody =
-                            model.temp_observation_number.toRequestBody(CommonConstant.MULTIPART.toMediaTypeOrNull())
-                        observationHistoryUseCase.saveObservationImagesAPIFlow(
-                            prepareFilePart(model.observation_image),
-                            requestBody,
-                            userId
-                        ).collect { api ->
-                            when (api.status) {
-                                APIResult.Status.SUCCESS -> {
-                                    api.data?.let {
-                                        Log.d(
-                                            TAG,
-                                            "value - ${it.message}, saveObservationHistoryAPI: ${api.data}"
-                                        )
-                                        _observationFormModel.value = false
-                                        _observationHistoryModel.value = savedId
-                                    }
-
-                                }
-
-                                APIResult.Status.ERROR -> {
-                                    Log.e(TAG, "saveObservationHistoryAPI: ${api.status}")
-                                    _observationFormModel.value = false
-                                }
-                            }
-                        }
-                    } else {
-                        _observationFormModel.value = false
-                        Log.e(TAG, "saveObservationHistoryAPI: userID is empty")
-                    }
-                }
-                saveImages.await()
-            } else {
-                //model.isImagesUpload = false
-                viewModelScope.launch {
-                    val updateModel = viewModelScope.async {
-                        val value = observationHistoryRepo.updateObservationHistory(
-                            model.isImagesUpload,
-                            model.temp_observation_number,
-                            model.primaryObservationId
-                        )
-                        Log.d(TAG, "saveObservationHistoryAPI: value: $value")
-                        return@async value
-                    }
-                    val updateModelValue = updateModel.await()
-                    Log.d(TAG, "saveObservationHistoryAPI: updateModelValue: $updateModelValue")
-                    if (updateModelValue > 0) {
-                        Log.d(TAG, "saveObservationHistoryAPI: Updated - savedId $savedId")
-                        _observationFormModel.value = false
-                        _observationHistoryModel.value = savedId
-                    } else {
-                        _observationFormModel.value = false
-                    }
-                }
-            }
-        }
-
-
-    }*/
-
-    private fun customisedImageList(savedPathList: ArrayList<String>): JsonArray {
-        val jsonArray = JsonArray()
-        savedPathList.forEachIndexed { index, path ->
-            val getFileName =
-                "${projectId}_${structureId}_${tradeId}_${path}_${index + 1}"
-            jsonArray.add(getFileName)
-        }
-
-        return jsonArray
-    }
 
     private suspend fun saveObservationHistory(model: ObservationHistory): Long {
         return viewModelScope.async {
@@ -322,28 +327,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
             Log.d(TAG, "inserted saveObservationHistory: savedId: $savedId")
             return@async savedId
         }.await()
-    }
-
-
-    fun addDummyEntry() {
-        viewModelScope.launch {
-            val list = arrayListOf<ObservationHistory>()
-            for (i in 1..15) {
-                val model = ObservationHistory()
-                val savedPathList = arrayListOf<String>()
-                if (i % 2 == 0) {
-                    savedPathList.add("/storage/emulated/0/Pictures/1706992666110.png")
-                } else {
-                    savedPathList.add("/storage/emulated/0/Pictures/1706992686807.png")
-                }
-                model.observation_image = savedPathList
-                model.temp_observation_number = "7887686856"
-                list.add(model)
-            }
-            val saveHistory = observationHistoryRepo.saveObservationHistoryList(list)
-            Log.d(TAG, "addDummyEntry: saveHistory: $saveHistory")
-        }
-
     }
 
     companion object {

@@ -343,8 +343,7 @@ class ObservationFragment : Fragment() {
                 remark,
                 reference,
                 targetDate,
-                savedPathList,
-                savedFileNameList
+                savedPathList
             )
 
 
@@ -371,7 +370,7 @@ class ObservationFragment : Fragment() {
 
     private fun liveDataObservers() {
 
-        viewModel.getProjectList().observe(viewLifecycleOwner) {
+        viewModel.projectList.observe(viewLifecycleOwner) {
             it?.let { projectModelItems ->
                 projectList = projectModelItems
                 val adapterProject = ArrayAdapter(
@@ -385,17 +384,15 @@ class ObservationFragment : Fragment() {
         }
 
 
-        lifecycleScope.launch {
-            viewModel.structureList.observe(viewLifecycleOwner) {
-                it?.let {
-                    structureList = it
-                    val structureModelArrayAdapter = ArrayAdapter(
-                        requireContext(),
-                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                        structureList
-                    )
-                    binding.autoStructureName.setAdapter(structureModelArrayAdapter)
-                }
+        viewModel.structureList.observe(viewLifecycleOwner) {
+            it?.let {
+                structureList = it
+                val structureModelArrayAdapter = ArrayAdapter(
+                    requireContext(),
+                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                    structureList
+                )
+                binding.autoStructureName.setAdapter(structureModelArrayAdapter)
             }
         }
 
@@ -414,7 +411,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getTradeGroupList().observe(viewLifecycleOwner) {
+            viewModel.tradeGroupModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     tradeGroupModelList = it
                     val tradeGroupArrayAdapter = ArrayAdapter(
@@ -462,7 +459,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getObservationTypeList().observe(viewLifecycleOwner) {
+            viewModel.observationTypeModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     observationTypeList = it
                     val tradeGroupArrayAdapter = ArrayAdapter(
@@ -476,7 +473,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getObservationCategoryList().observe(viewLifecycleOwner) {
+            viewModel.observationCategoryModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     observationCategoryList = it
                     val observationCategoryArrayAdapter = ArrayAdapter(
@@ -490,7 +487,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getObservationSeverityList().observe(viewLifecycleOwner) {
+            viewModel.observationSeverList.observe(viewLifecycleOwner) {
                 it?.let {
                     observationSeverityList = it
                     val tradeGroupArrayAdapter = ArrayAdapter(
@@ -504,7 +501,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getAccountableList().observe(viewLifecycleOwner) {
+            viewModel.accountableModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     accountableList = it
                     val tradeGroupArrayAdapter = ArrayAdapter(
@@ -518,7 +515,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getAllocatedToList().observe(viewLifecycleOwner) {
+            viewModel.allocatedlList.observe(viewLifecycleOwner) {
                 it?.let {
                     allocatedToList = it
                     val allocatedArrayAdapter = ArrayAdapter(
@@ -532,7 +529,7 @@ class ObservationFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getAllStatusList().observe(viewLifecycleOwner) {
+            viewModel.statusModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     statusList = it
                     val statusArrayAdapter = ArrayAdapter(
@@ -549,17 +546,27 @@ class ObservationFragment : Fragment() {
     }
 
     private fun setProjectAdapterData() {
+        viewModel.getProjectList()
+        viewModel.getTradeGroupList()
+        viewModel.getAllocatedToList()
+        viewModel.getAllStatusList()
+        viewModel.getObservationSeverityList()
+        viewModel.getObservationCategoryList()
+        viewModel.getObservationTypeList()
+        viewModel.getAccountableList()
 
         binding.autoCompleteProjectName.setOnItemClickListener { _, _, position, _ ->
             viewModel.projectId = projectList[position].project_id
             viewModel.getStructureList(viewModel.projectId)
             binding.autoStructureName.setText("")
+            viewModel.structureId = ""
             Log.d(TAG, "setProjectAdapterData: ${viewModel.projectId}")
         }
 
         binding.autoStructureName.setOnItemClickListener { _, _, position, _ ->
             viewModel.structureId = structureList[position].structure_id
             binding.autoStageOrFloorName.setText("")
+            viewModel.stageOrFloorId = ""
             viewModel.getStageOrFloorList(viewModel.structureId)
             Log.d(TAG, "autoStructureName: ${viewModel.structureId}")
         }
@@ -567,12 +574,14 @@ class ObservationFragment : Fragment() {
         binding.autoStageOrFloorName.setOnItemClickListener { _, _, position, _ ->
             viewModel.stageOrFloorId = stageOrFloorList[position].stage_id
             binding.autoTradeGroupName.setText("")
+            viewModel.tradeGroupId = ""
             Log.d(TAG, "autoStageOrFloorName: ${viewModel.stageOrFloorId}")
         }
 
         binding.autoTradeGroupName.setOnItemClickListener { _, _, position, _ ->
             viewModel.tradeGroupId = tradeGroupModelList[position].tradegroup_id
             binding.autoActivityName.setText("")
+            viewModel.tradeId = ""
             viewModel.getTradeModelList(viewModel.tradeGroupId)
             Log.d(TAG, "autoTradeGroupName: ${viewModel.tradeGroupId}")
         }
