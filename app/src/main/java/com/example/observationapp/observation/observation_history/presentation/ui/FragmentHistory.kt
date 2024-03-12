@@ -16,6 +16,7 @@ import com.example.observationapp.dashboard.domainlayer.HistoryViewModel
 import com.example.observationapp.databinding.FragmentHistoryBinding
 import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.observation.observation_history.presentation.adapters.ObservationHistoryAdapter
+import com.example.observationapp.util.CommonConstant
 import com.example.observationapp.util.gone
 import com.example.observationapp.util.visible
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +71,9 @@ class FragmentHistory : Fragment() {
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 val model = observationHistoryList[position]
-                Log.d(TAG, "onItemClick: $model")
+                val bundle = Bundle()
+                bundle.putParcelable(CommonConstant.KEY_PARCELABLE_HISTORY_MODEL, model)
+                navController.navigate(R.id.action_fragmentHistory_to_observationFragment, bundle)
             }
 
         })

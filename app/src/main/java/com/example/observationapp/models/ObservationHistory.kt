@@ -1,10 +1,13 @@
 package com.example.observationapp.models
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.observationapp.util.ApplicationDBTables
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = ApplicationDBTables.TABLE_OBSERVATION_HISTORY)
 data class ObservationHistory(
     @SerializedName("activity_id")
@@ -42,11 +45,11 @@ data class ObservationHistory(
     var inner_status: String = "",
     var created_at: String = "",
 
-    ) {
+    ) : Parcelable {
     var isOffline: Boolean = false
     var isImagesUpload: Boolean = true
     override fun toString(): String {
-        return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, temp_observation_number: $temp_observation_number, images: $observation_image. isImagesUpload: $isImagesUpload  "
-        // return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors=$floors, location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image='$observation_image', tempObservationId='$temp_observation_number')"
+//        return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, temp_observation_number: $temp_observation_number, images: $observation_image. isImagesUpload: $isImagesUpload  "
+        return "ObservationHistory(activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors='$floors', location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image=$observation_image, primaryObservationId=$primaryObservationId, temp_observation_number='$temp_observation_number', history_id='$history_id', obj_history_id='$obj_history_id', added_by='$added_by', assigned_to='$assigned_to', comment='$comment', is_approved='$is_approved', inner_status='$inner_status', created_at='$created_at', isOffline=$isOffline, isImagesUpload=$isImagesUpload)"
     }
 }

@@ -22,6 +22,7 @@ import com.example.observationapp.databinding.FragmentObservationBinding
 import com.example.observationapp.models.Accountable
 import com.example.observationapp.models.AllocatedToModel
 import com.example.observationapp.models.ObservationCategory
+import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.models.ObservationSeverity
 import com.example.observationapp.models.ObservationType
 import com.example.observationapp.models.ProjectModelItem
@@ -56,6 +57,7 @@ class ObservationFragment : Fragment() {
         private const val TAG = "ObservationFragment"
     }
 
+    private var observationHistoryModel: ObservationHistory? = null
     private val viewModel: ObservationViewModel by viewModels()
     private var projectList = listOf<ProjectModelItem>()
     private var structureList = listOf<StructureModel>()
@@ -76,9 +78,19 @@ class ObservationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentObservationBinding.inflate(inflater, container, false)
-        /*savedPathList.add("/storage/emulated/0/Pictures/1705822595241.png")
-        savedPathList.add("/storage/emulated/0/Pictures/1705822617155.png")*/
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+        val model =
+            arguments?.getParcelable<ObservationHistory>(CommonConstant.KEY_PARCELABLE_HISTORY_MODEL)
+        Log.d(TAG, "onCreateView: $model")
+
+        arguments?.let { bundle ->
+            bundle.getParcelable<ObservationHistory>(CommonConstant.KEY_PARCELABLE_HISTORY_MODEL)
+                ?.let {
+                    Log.d(TAG, "onCreateView: model: $it")
+                    observationHistoryModel = it
+                }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 /* override back pressing */
                 override fun handleOnBackPressed() {
@@ -369,9 +381,14 @@ class ObservationFragment : Fragment() {
 
 
     private fun liveDataObservers() {
+        viewModel.obsHistoryModel.observe(viewLifecycleOwner) { model ->
 
-        viewModel.projectList.observe(viewLifecycleOwner) {
-            it?.let { projectModelItems ->
+            Log.d(TAG, "onCreateView: $model")
+        }
+
+
+        viewModel.projectList.observe(viewLifecycleOwner) { projectListModel ->
+            projectListModel?.let { projectModelItems ->
                 projectList = projectModelItems
                 val adapterProject = ArrayAdapter(
                     requireContext(),
@@ -379,6 +396,7 @@ class ObservationFragment : Fragment() {
                     projectList
                 )
                 binding.autoCompleteProjectName.setAdapter(adapterProject)
+                setDataToProjectListAdapter(adapterProject)
                 viewModel.getUserId()
             }
         }
@@ -393,6 +411,7 @@ class ObservationFragment : Fragment() {
                     structureList
                 )
                 binding.autoStructureName.setAdapter(structureModelArrayAdapter)
+                setDataToStructureListAdapter(structureModelArrayAdapter)
             }
         }
 
@@ -406,6 +425,7 @@ class ObservationFragment : Fragment() {
                         stageOrFloorList
                     )
                     binding.autoStageOrFloorName.setAdapter(stageModelArrayAdapter)
+                    setDataToStageOrFloorNameAdapter(stageModelArrayAdapter)
                 }
             }
         }
@@ -420,6 +440,7 @@ class ObservationFragment : Fragment() {
                         tradeGroupModelList
                     )
                     binding.autoTradeGroupName.setAdapter(tradeGroupArrayAdapter)
+                    setTradeGroup(tradeGroupArrayAdapter)
                 }
             }
         }
@@ -434,6 +455,7 @@ class ObservationFragment : Fragment() {
                         tradeModelList
                     )
                     binding.autoActivityName.setAdapter(tradeModelAdapter)
+                    setTradeOrActivity(tradeModelAdapter)
                 }
             }
         }
@@ -462,12 +484,13 @@ class ObservationFragment : Fragment() {
             viewModel.observationTypeModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     observationTypeList = it
-                    val tradeGroupArrayAdapter = ArrayAdapter(
+                    val observationTypeArrayAdapter = ArrayAdapter(
                         requireContext(),
                         androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
                         observationTypeList
                     )
-                    binding.autoObservationTypeName.setAdapter(tradeGroupArrayAdapter)
+                    binding.autoObservationTypeName.setAdapter(observationTypeArrayAdapter)
+                    setObservationTypeData(observationTypeArrayAdapter)
                 }
             }
         }
@@ -482,6 +505,7 @@ class ObservationFragment : Fragment() {
                         observationCategoryList
                     )
                     binding.autoObservationCategoryName.setAdapter(observationCategoryArrayAdapter)
+                    setObservationCategoryData(observationCategoryArrayAdapter)
                 }
             }
         }
@@ -490,12 +514,13 @@ class ObservationFragment : Fragment() {
             viewModel.observationSeverList.observe(viewLifecycleOwner) {
                 it?.let {
                     observationSeverityList = it
-                    val tradeGroupArrayAdapter = ArrayAdapter(
+                    val observationSeverityArrayAdapter = ArrayAdapter(
                         requireContext(),
                         androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
                         observationSeverityList
                     )
-                    binding.autoObsSeverityName.setAdapter(tradeGroupArrayAdapter)
+                    binding.autoObsSeverityName.setAdapter(observationSeverityArrayAdapter)
+                    setObservationSeverityData(observationSeverityArrayAdapter)
                 }
             }
         }
@@ -504,12 +529,13 @@ class ObservationFragment : Fragment() {
             viewModel.accountableModelList.observe(viewLifecycleOwner) {
                 it?.let {
                     accountableList = it
-                    val tradeGroupArrayAdapter = ArrayAdapter(
+                    val accountableArrayAdapter = ArrayAdapter(
                         requireContext(),
                         androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
                         accountableList
                     )
-                    binding.autoAccountableName.setAdapter(tradeGroupArrayAdapter)
+                    binding.autoAccountableName.setAdapter(accountableArrayAdapter)
+                    setObservationAccountableData(accountableArrayAdapter)
                 }
             }
         }
@@ -524,6 +550,7 @@ class ObservationFragment : Fragment() {
                         it
                     )
                     binding.autoCloseByName.setAdapter(allocatedArrayAdapter)
+                    setCloseByData(allocatedArrayAdapter)
                 }
             }
         }
@@ -538,11 +565,180 @@ class ObservationFragment : Fragment() {
                         it
                     )
                     binding.autoStatusName.setAdapter(statusArrayAdapter)
+                    setStatusNameData(statusArrayAdapter)
                 }
             }
         }
 
 
+    }
+
+    private fun setDataToProjectListAdapter(adapterProject: ArrayAdapter<ProjectModelItem>) {
+        observationHistoryModel?.let { obModel ->
+            projectList.forEach {
+                if (obModel.project_id == it.project_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoCompleteProjectName.setText(
+                        binding.autoCompleteProjectName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.projectId = projectList[pos].project_id
+                    viewModel.getStructureList(viewModel.projectId)
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setDataToStructureListAdapter(adapterProject: ArrayAdapter<StructureModel>) {
+        observationHistoryModel?.let { model ->
+            structureList.forEach {
+                if (model.structure_id == it.structure_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoStructureName.setText(
+                        binding.autoStructureName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.structureId = structureList[pos].structure_id
+                    viewModel.getStageOrFloorList(viewModel.structureId)
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setDataToStageOrFloorNameAdapter(adapterProject: ArrayAdapter<StageModel>) {
+        observationHistoryModel?.let { model ->
+            stageOrFloorList.forEach {
+                if (model.floors == it.stage_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoStageOrFloorName.setText(
+                        binding.autoStageOrFloorName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.stageOrFloorId = stageOrFloorList[pos].stage_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setTradeGroup(adapterProject: ArrayAdapter<TradeGroupModel>) {
+        observationHistoryModel?.let { model ->
+            tradeGroupModelList.forEach {
+                if (model.tradegroup_id == it.tradegroup_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoTradeGroupName.setText(
+                        binding.autoTradeGroupName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.tradeGroupId = tradeGroupModelList[pos].tradegroup_id
+                    viewModel.getTradeModelList(viewModel.tradeGroupId)
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setTradeOrActivity(adapterProject: ArrayAdapter<TradeModel>) {
+        observationHistoryModel?.let { model ->
+            tradeModelList.forEach {
+                if (model.activityOrTradeId == it.trade_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoActivityName.setText(
+                        binding.autoActivityName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.tradeId = tradeModelList[pos].trade_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setObservationTypeData(adapterProject: ArrayAdapter<ObservationType>) {
+        observationHistoryModel?.let { model ->
+            observationTypeList.forEach {
+                if (model.observation_type == it.type_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoObservationTypeName.setText(
+                        binding.autoObservationTypeName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.observationTypeId = observationTypeList[pos].type_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setObservationCategoryData(adapterProject: ArrayAdapter<ObservationCategory>) {
+        observationHistoryModel?.let { model ->
+            observationCategoryList.forEach {
+                if (model.observation_category == it.category_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoObservationCategoryName.setText(
+                        binding.autoObservationCategoryName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.observationCategoryId = observationCategoryList[pos].category_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setObservationSeverityData(adapterProject: ArrayAdapter<ObservationSeverity>) {
+        observationHistoryModel?.let { model ->
+            observationSeverityList.forEach {
+                if (model.observation_severity == it.severity_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoObsSeverityName.setText(
+                        binding.autoObsSeverityName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.observationCategoryId = observationSeverityList[pos].severity_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setObservationAccountableData(adapterProject: ArrayAdapter<Accountable>) {
+        observationHistoryModel?.let { model ->
+            accountableList.forEach {
+                if (model.site_representative == it.user_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoAccountableName.setText(
+                        binding.autoAccountableName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.accountableId = accountableList[pos].user_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setStatusNameData(adapterProject: ArrayAdapter<StatusModel>) {
+        observationHistoryModel?.let { model ->
+            statusList.forEach {
+                if (model.site_representative == it.status_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoStatusName.setText(
+                        binding.autoStatusName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.statusId = statusList[pos].status_id
+                    return@forEach
+                }
+            }
+        }
+    }
+
+    private fun setCloseByData(adapterProject: ArrayAdapter<AllocatedToModel>) {
+        observationHistoryModel?.let { model ->
+            allocatedToList.forEach {
+                if (model.closed_by == it.role_id) {
+                    val pos = adapterProject.getPosition(it)
+                    binding.autoCloseByName.setText(
+                        binding.autoCloseByName.adapter.getItem(pos).toString(), false
+                    )
+                    viewModel.closeById = allocatedToList[pos].role_id
+                    return@forEach
+                }
+            }
+        }
     }
 
     private fun setProjectAdapterData() {
@@ -575,6 +771,7 @@ class ObservationFragment : Fragment() {
             viewModel.stageOrFloorId = stageOrFloorList[position].stage_id
             binding.autoTradeGroupName.setText("")
             viewModel.tradeGroupId = ""
+            //viewModel.getTradeGroupList()
             Log.d(TAG, "autoStageOrFloorName: ${viewModel.stageOrFloorId}")
         }
 

@@ -39,14 +39,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10dp">
 
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteProjectName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="@string/project_name"
-                    android:inputType="none" />
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteProjectName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/project_name"
+                        android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

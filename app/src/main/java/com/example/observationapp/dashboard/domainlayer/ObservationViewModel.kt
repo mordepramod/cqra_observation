@@ -4,7 +4,6 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.Accountable
@@ -32,11 +31,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.ContinuationInterceptor
 
 
 @HiltViewModel
-class ObservationViewModel @Inject constructor() : ViewModel() {
+class ObservationViewModel @Inject constructor() : ObservationBaseViewModel() {
     private var savedId: Long = -1L
 
     @Inject
@@ -109,16 +107,8 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
 
     fun getProjectList() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d(
-                TAG,
-                "getProjectList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-            )
             val result = projectDBRepository.getProjectList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getProjectList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _projectList.value = result
             }
         }
@@ -128,16 +118,8 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     fun getStructureList(projectId: String) {
         if (projectId.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
-                Log.d(
-                    TAG,
-                    "getStructureList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 val result = projectDBRepository.getStructureList(projectId)
                 withContext(Dispatchers.Main) {
-                    Log.d(
-                        TAG,
-                        "getStructureList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                    )
                     _structureList.value = result
                 }
             }
@@ -148,10 +130,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         if (structureId.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
                 withContext(Dispatchers.Main) {
-                    Log.d(
-                        TAG,
-                        "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                    )
                     _stageOrFloorList.value = projectDBRepository.getStageOrFloorList(structureId)
                 }
             }
@@ -162,10 +140,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = observationDBRepo.getTradeGroupList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _tradeGroupModelList.value = result
             }
         }
@@ -176,10 +150,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = observationDBRepo.getObservationTypeList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _observationTypeList.value = result
             }
         }
@@ -190,10 +160,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = observationDBRepo.getObservationCategoryList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _observationCategoryList.value = result
             }
         }
@@ -203,10 +169,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = observationDBRepo.getObservationSeverityList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _observationSeverityList.value = result
             }
         }
@@ -218,10 +180,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
             val result =
                 observationDBRepo.getAccountableList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _accountableList.value = result
             }
         }
@@ -232,10 +190,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
             val result =
                 observationDBRepo.getAllocatedToList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _allocatedToModelList.value = result
             }
         }
@@ -246,10 +200,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
             val result =
                 observationDBRepo.getAllStatusList()
             withContext(Dispatchers.Main) {
-                Log.d(
-                    TAG,
-                    "getStageOrFloorList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _statusModelList.value = result
             }
         }
@@ -258,10 +208,6 @@ class ObservationViewModel @Inject constructor() : ViewModel() {
     fun getTradeModelList(tradeGroupId: String) {
         if (tradeGroupId.isNotEmpty()) {
             viewModelScope.launch {
-                Log.d(
-                    TAG,
-                    "getTradeModelList Current Dispatcher: ${coroutineContext[ContinuationInterceptor.Key]}"
-                )
                 _tradeModelList.value = observationDBRepo.getTradeModelList(tradeGroupId)
             }
         }

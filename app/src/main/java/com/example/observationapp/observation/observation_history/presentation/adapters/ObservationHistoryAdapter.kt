@@ -19,7 +19,7 @@ class ObservationHistoryAdapter :
         RecyclerView.ViewHolder(itemV.root) {
         fun bindData(position: Int) {
 
-            itemV.root.setOnClickListener {
+            itemV.materialCardObservation.setOnClickListener {
                 listener.onItemClick(position)
             }
 
