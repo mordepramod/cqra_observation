@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textStyle="bold"
+        android:textColor="@color/md_theme_primary"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         tools:text="Loading" />
 

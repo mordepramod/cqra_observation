@@ -3,7 +3,6 @@ package com.example.observationapp.dashboard.domainlayer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.ObservationHistory
@@ -17,7 +16,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class HistoryViewModel @Inject constructor() : ViewModel() {
+class HistoryViewModel @Inject constructor() : ObservationBaseViewModel() {
     companion object {
         private const val TAG = "HistoryViewModel"
     }
@@ -37,7 +36,6 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _observationHistoryList.value = observationHistoryUseCase.getObservationHistoryList()
         }
-
     }
 
     fun getObservationHistoryAPI() {

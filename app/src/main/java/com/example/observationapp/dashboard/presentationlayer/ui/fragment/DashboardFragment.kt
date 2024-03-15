@@ -191,6 +191,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun adapterClickListener() {
+        adapter.setContext(requireContext())
         adapter.setListener(object : ICardViewClickListener {
             override fun onItemClick(position: Int) {
                 if (moduleList[position].module_id == "6") {
@@ -278,10 +279,11 @@ class DashboardFragment : Fragment() {
 
     private fun slidingImageAdapter() {
         imageList = arrayListOf()
-        imageList.add(R.drawable.ic_launcher_background)
-        imageList.add(R.drawable.ic_launcher_background)
-        imageList.add(R.drawable.ic_launcher_background)
-        imageList.add(R.drawable.ic_launcher_background)
+        imageList.add(R.drawable.image_1)
+        imageList.add(R.drawable.image_2)
+        imageList.add(R.drawable.image_3)
+        imageList.add(R.drawable.image_4)
+        imageList.add(R.drawable.image_5)
 
         val viewPagerAdapter = ImageSlideAdapter(imageList)
         binding.viewPagerImages.apply {

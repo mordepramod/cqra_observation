@@ -23,7 +23,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         liveDataObservers()
     }
-
     private fun liveDataObservers() {
 
         viewModel.loginUserInfo.observe(this) {
@@ -45,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             login()
-            //launchActivity<DashboardActivity>()
         }
 
     }

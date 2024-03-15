@@ -1,6 +1,5 @@
 package com.example.observationapp.repository.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -33,7 +32,7 @@ interface ProjectDao {
     suspend fun deleteAll(): Int
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_PROJECT}")
-    fun getAllProjectList(): LiveData<List<ProjectModelItem>>
+    fun getAllProjectList(): List<ProjectModelItem>
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_STRUCTURE} WHERE project_id = :projectId")
     suspend fun getStructureListOnProjectId(projectId: String): List<StructureModel>

@@ -127,7 +127,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/Status"
+                android:hint="@string/status"
                 app:endIconMode="clear_text"
                 android:layout_marginTop="@dimen/dimen_20dp"
                 app:layout_constraintEnd_toEndOf="parent"

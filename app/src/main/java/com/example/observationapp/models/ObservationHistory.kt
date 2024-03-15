@@ -1,35 +1,55 @@
 package com.example.observationapp.models
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.observationapp.util.ApplicationDBTables
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = ApplicationDBTables.TABLE_OBSERVATION_HISTORY)
 data class ObservationHistory(
-    val activity_id: String,
-    val client_id: String,
-    val closed_by: String,
-    val created_by: String,
-    val description: String,
-    val floors: List<Int>,
-    val location: String,
-    val observation_category: String,
-    val observation_date: String,
-    @PrimaryKey
-    val observation_id: String,
-    val observation_number: String,
-    val observation_severity: String,
-    val observation_type: String,
-    val project_id: String,
-    val reference: String,
-    val remark: String,
-    val site_representative: String,
-    val status: String,
-    val structure_id: String,
-    val target_date: String,
-    val tradegroup_id: String
-) {
+    @SerializedName("activity_id")
+    var activityOrTradeId: String = "",
+    var client_id: String = "",
+    var closed_by: String = "",
+    var created_by: String = "",
+    var description: String = "",
+    var floors: String = "",
+    var location: String = "",
+    var observation_category: String = "",
+    var observation_date: String = "",
+    var observation_id: String = "",
+    var observation_number: String = "",
+    var observation_severity: String = "",
+    var observation_type: String = "",
+    var project_id: String = "",
+    var reference: String = "",
+    var remark: String = "",
+    var site_representative: String = "",
+    var status: String = "",
+    var structure_id: String = "",
+    var target_date: String = "",
+    var tradegroup_id: String = "",
+    var observation_image: List<String> = arrayListOf(),
+    @PrimaryKey(autoGenerate = true)
+    var primaryObservationId: Int = 0,
+    var temp_observation_number: String = "",
+    var history_id: String = "",
+    var obj_history_id: String = "",
+    var added_by: String = "",
+    var assigned_to: String = "",
+    var comment: String = "",
+    var is_approved: String = "",
+    var inner_status: String = "",
+    var created_at: String = "",
+
+    ) : Parcelable {
+    var isOffline: Boolean = false
+    var isImagesUpload: Boolean = true
     override fun toString(): String {
-        return "ObservationHistory(activity_id='$activity_id', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors=$floors, location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id')"
+//        return "ObservationHistory(isOffline: $isOffline, primaryObservationId = $primaryObservationId, temp_observation_number: $temp_observation_number, images: $observation_image. isImagesUpload: $isImagesUpload  "
+        return "ObservationHistory(activityOrTradeId='$activityOrTradeId', client_id='$client_id', closed_by='$closed_by', created_by='$created_by', description='$description', floors='$floors', location='$location', observation_category='$observation_category', observation_date='$observation_date', observation_id='$observation_id', observation_number='$observation_number', observation_severity='$observation_severity', observation_type='$observation_type', project_id='$project_id', reference='$reference', remark='$remark', site_representative='$site_representative', status='$status', structure_id='$structure_id', target_date='$target_date', tradegroup_id='$tradegroup_id', observation_image=$observation_image, primaryObservationId=$primaryObservationId, temp_observation_number='$temp_observation_number', history_id='$history_id', obj_history_id='$obj_history_id', added_by='$added_by', assigned_to='$assigned_to', comment='$comment', is_approved='$is_approved', inner_status='$inner_status', created_at='$created_at', isOffline=$isOffline, isImagesUpload=$isImagesUpload)"
     }
 }

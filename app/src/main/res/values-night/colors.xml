@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<resources></resources><!--
+
 <resources>
     <color name="md_theme_primary">#70DBA7</color>
     <color name="md_theme_primary_">#2670DBA7</color>
@@ -31,4 +34,5 @@
     <color name="md_theme_onSurface">#C5C7C3</color>
     <color name="md_theme_surfaceVariant">#404943</color>
     <color name="md_theme_onSurfaceVariant">#C0C9C1</color>
-</resources>
+    <color name="toolbarColor">#ffbd59</color>
+</resources>-->

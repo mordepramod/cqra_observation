@@ -1,6 +1,5 @@
 package com.example.observationapp.repository.database
 
-import androidx.lifecycle.LiveData
 import com.example.observationapp.models.ProjectModelItem
 import com.example.observationapp.models.StageModel
 import com.example.observationapp.models.StructureModel
@@ -40,5 +39,5 @@ class ProjectDBRepository @Inject constructor(
         return projectDao.getUnitList(stageOrFloorId)
     }
 
-    val projectList: LiveData<List<ProjectModelItem>> = projectDao.getAllProjectList()
+    fun getProjectList() = projectDao.getAllProjectList()
 }

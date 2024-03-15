@@ -6,6 +6,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -23,9 +24,6 @@
         android:theme="@style/Theme.ObservationApp"
         tools:targetApi="31">
         <activity
-            android:name=".dashboard.presentationlayer.ui.activity.DashBoadScreen"
-            android:exported="false" />
-        <activity
             android:name=".dashboard.presentationlayer.ui.activity.SplashScrActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
@@ -39,8 +37,25 @@
             android:name=".dashboard.presentationlayer.ui.activity.DashboardActivity"
             android:exported="false" />
         <activity
+            android:name=".photo_edit.EditImageActivity"
+            android:theme="@style/fullScreenTheme"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
             android:name=".login.presentation.ui.activity.LoginActivity"
             android:exported="true" />
+
+        <!--Below code required to HiltWorker-->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>
