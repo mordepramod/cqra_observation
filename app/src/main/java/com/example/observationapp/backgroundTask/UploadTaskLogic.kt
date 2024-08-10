@@ -208,8 +208,8 @@ class UploadTaskLogic @Inject constructor(
                         val updatedItem =
                             CoroutineScope(Dispatchers.IO).async {
                                 observationHistoryRepo.updateFormObservationHistory(
-                                    true,
-                                    localData.observation_number,
+                                    false,
+                                    localData?.observation_number ?: "",
                                     model.primaryObservationId
                                 )
                             }
@@ -220,7 +220,7 @@ class UploadTaskLogic @Inject constructor(
                     }
 
                     APIResult.Status.ERROR -> {
-                        Log.e(TAG, "uploadFormToServer: ${response.message}")
+                        Log.e(TAG, "uploadFormToServer, Status.ERROR: ${response.message}")
                     }
                 }
             }

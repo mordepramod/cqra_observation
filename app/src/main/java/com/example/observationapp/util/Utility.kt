@@ -6,7 +6,13 @@ import android.net.Uri
 import android.provider.Settings
 import android.text.format.DateFormat
 import android.util.Log
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.observationapp.BuildConfig
+import com.example.observationapp.backgroundTask.ObservationFormUploadWorker
 import com.google.gson.JsonArray
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -118,5 +124,18 @@ object Utility {
             jsonArray.add(getFileName)
         }
         return jsonArray
+    }
+
+    fun startPeriodicWorker(context: Context) {
+        val uploadImages = OneTimeWorkRequestBuilder<ObservationFormUploadWorker>()
+            .setConstraints(
+                Constraints(
+                    requiredNetworkType = NetworkType.CONNECTED
+                )
+            )
+            .build()
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork("uploadImageTask", ExistingWorkPolicy.REPLACE, uploadImages)
+
     }
 }

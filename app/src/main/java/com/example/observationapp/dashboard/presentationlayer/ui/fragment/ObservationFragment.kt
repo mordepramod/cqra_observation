@@ -33,6 +33,7 @@ import com.example.observationapp.models.TradeGroupModel
 import com.example.observationapp.models.TradeModel
 import com.example.observationapp.photo_edit.EditImageActivity
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility
 import com.example.observationapp.util.Utility.getSelectedDateInString
 import com.example.observationapp.util.Utility.getTimeStampInLong
 import com.example.observationapp.util.gone
@@ -345,10 +346,11 @@ class ObservationFragment : Fragment() {
                 )
                 return@setOnClickListener
             }
-            if (savedPathList.size == 0) {
+            // TODO: 10/08/24 uncomment later
+            /*if (savedPathList.size == 0) {
                 requireContext().showShortToast(getString(R.string.no_images_are_selected))
                 return@setOnClickListener
-            }
+            }*/
             viewModel.saveForm(
                 location,
                 description,
@@ -463,6 +465,7 @@ class ObservationFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.observationHistoryModel.observe(viewLifecycleOwner) {
                 it?.let {
+                    Utility.startPeriodicWorker(requireActivity())
                     findNavController().popBackStack()
                 }
             }

@@ -22,7 +22,8 @@ class ObservationFormUploadWorker @AssistedInject constructor(
 
         try {
             uploadTaskLogic.uploadFormToServer()
-            uploadTaskLogic.uploadImagesToServer()
+            // TODO: 10/08/24 Uncomment later
+            //uploadTaskLogic.uploadImagesToServer()
         } catch (e: CancellationException) {
             Log.e(TAG, "doWork: task cancelled", e)
         }
