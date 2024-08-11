@@ -79,9 +79,6 @@ class ObservationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentObservationBinding.inflate(inflater, container, false)
-        val model =
-            arguments?.getParcelable<ObservationHistory>(CommonConstant.KEY_PARCELABLE_HISTORY_MODEL)
-        Log.d(TAG, "onCreateView: $model")
 
         arguments?.let { bundle ->
             bundle.getParcelable<ObservationHistory>(CommonConstant.KEY_PARCELABLE_HISTORY_MODEL)
@@ -171,7 +168,10 @@ class ObservationFragment : Fragment() {
         liveDataObservers()
         setProjectAdapterData()
         clickListeners()
-
+        observationHistoryModel?.let {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                getString(R.string.update)
+        }
     }
 
     private fun clickListeners() {
@@ -589,6 +589,12 @@ class ObservationFragment : Fragment() {
                     return@forEach
                 }
             }
+            binding.autoDescriptionName.setText(obModel.description)
+            binding.autoRemarkName.setText(obModel.remark)
+            binding.autoReferenceName.setText(obModel.reference)
+            binding.autoLocationName.setText(obModel.location)
+            binding.etDatePicker.setText(obModel.target_date)
+            binding.textObservationNumber.setText(obModel.observation_number)
         }
     }
 
@@ -717,7 +723,7 @@ class ObservationFragment : Fragment() {
     private fun setStatusNameData(adapterProject: ArrayAdapter<StatusModel>) {
         observationHistoryModel?.let { model ->
             statusList.forEach {
-                if (model.site_representative == it.status_id) {
+                if (model.status == it.status_id) {
                     val pos = adapterProject.getPosition(it)
                     binding.autoStatusName.setText(
                         binding.autoStatusName.adapter.getItem(pos).toString(), false
@@ -798,6 +804,7 @@ class ObservationFragment : Fragment() {
 
         binding.autoObservationCategoryName.setOnItemClickListener { _, _, position, _ ->
             viewModel.observationCategoryId = observationCategoryList[position].category_id
+            setObservationNumber()
             Log.d(TAG, "autoObservationCategoryName: ${viewModel.observationCategoryId}")
         }
 
@@ -872,6 +879,21 @@ class ObservationFragment : Fragment() {
             picker.addOnDismissListener {
                 // Respond to dismiss events.
             }
+        }
+
+    }
+
+    private fun setObservationNumber() {
+        try {
+            val count = viewModel.getObservationNumberValue()
+            if (count == 0) {
+                binding.textObservationNumber.setText(getString(R.string.observation_number))
+            } else {
+                val text = "${binding.autoObservationCategoryName.text} - $count"
+                binding.textObservationNumber.setText(text)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "setObservationNumber: Exception: ", e)
         }
 
     }

@@ -1,6 +1,5 @@
 package com.example.observationapp.repository.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -34,7 +33,7 @@ interface LoginDao {
     suspend fun getLoginUserInfo(): UserModel
 
     @Query("SELECT * FROM ${ApplicationDBTables.TABLE_MENU_SUBMODULE}")
-    fun getMenuSubModuleList(): LiveData<List<Submodule>>
+    suspend fun getMenuSubModuleList(): List<Submodule>
 
     /*******************    Get Data from DB Ends     ********************/
 

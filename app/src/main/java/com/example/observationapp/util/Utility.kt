@@ -34,7 +34,7 @@ object Utility {
     }
 
     inline fun <reified T : Any> createIntent(context: Context) = Intent(context, T::class.java)
-
+    val observationCategory: HashMap<Int, Int> = hashMapOf()
     fun getTodayDateAndTime(): String {
         val sdf =
             SimpleDateFormat(CommonConstant.DATE_FORMAT_yyyy_dd_mm_hh_mm_ss, Locale.getDefault())
@@ -138,4 +138,5 @@ object Utility {
             .enqueueUniqueWork("uploadImageTask", ExistingWorkPolicy.REPLACE, uploadImages)
 
     }
+
 }

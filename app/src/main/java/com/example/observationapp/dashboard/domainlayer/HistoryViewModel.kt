@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.observationapp.di.DataStoreRepoInterface
 import com.example.observationapp.models.ObservationHistory
 import com.example.observationapp.observation.observation_history.datalayer.ObservationHistoryUseCase
+import com.example.observationapp.repository.database.LoginDBRepository
 import com.example.observationapp.util.APIResult
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility.observationCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -21,6 +23,7 @@ class HistoryViewModel @Inject constructor() : ObservationBaseViewModel() {
         private const val TAG = "HistoryViewModel"
     }
 
+
     @Inject
     lateinit var dataStoreRepoInterface: DataStoreRepoInterface
     var apiSuccess: Boolean = false
@@ -28,14 +31,34 @@ class HistoryViewModel @Inject constructor() : ObservationBaseViewModel() {
     val observationHistory: LiveData<Boolean> = _observationHistory
     private var _observationHistoryList = MutableLiveData<List<ObservationHistory>>()
     val observationHistoryList: LiveData<List<ObservationHistory>> = _observationHistoryList
+    private var _isAddObservationAllowed = MutableLiveData<Boolean>()
+    val isAddObservationAllowed: LiveData<Boolean> = _isAddObservationAllowed
+
+    @Inject
+    lateinit var loginDBRepository: LoginDBRepository
 
     @Inject
     lateinit var observationHistoryUseCase: ObservationHistoryUseCase
 
     fun observationHistoryList() {
         viewModelScope.launch {
-            _observationHistoryList.value = observationHistoryUseCase.getObservationHistoryList()
+            val list = observationHistoryUseCase.getObservationHistoryList()
+            _observationHistoryList.value = list
+            getObservationCategoryCount(list)
         }
+    }
+
+    private fun getObservationCategoryCount(list: List<ObservationHistory>) {
+        list.forEach {
+            if (observationCategory.containsKey(it.observation_category.toInt())) {
+                val count = observationCategory[it.observation_category.toInt()]
+                observationCategory[it.observation_category.toInt()] = count!! + 1
+            } else {
+                observationCategory[it.observation_category.toInt()] = 1
+            }
+        }
+        Log.d(TAG, "getObservationCategoryCount: observationCategory: $observationCategory")
+
     }
 
     fun getObservationHistoryAPI() {
@@ -99,6 +122,16 @@ class HistoryViewModel @Inject constructor() : ObservationBaseViewModel() {
         return runBlocking {
             dataStoreRepoInterface.getBoolean(CommonConstant.GET_OBSERVATION_HISTORY_API_CALLED)
         }
+    }
+
+    fun getAddObservationAllowed() {
+        viewModelScope.launch {
+            val result = loginDBRepository.getMenuSubModuleList().first {
+                it.submodule_id.toInt() == 6
+            }
+            _isAddObservationAllowed.value = result.submodule_name.isNotEmpty()
+        }
+
     }
 
 }

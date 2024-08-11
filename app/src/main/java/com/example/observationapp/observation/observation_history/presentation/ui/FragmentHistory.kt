@@ -53,6 +53,7 @@ class FragmentHistory : Fragment() {
         iniView()
         observeLiveData()
         getObservationHistoryAPIOrDB()
+        viewModel.getAddObservationAllowed()
     }
 
     private fun showProgress() {
@@ -116,7 +117,13 @@ class FragmentHistory : Fragment() {
                     adapter.setData(it)
                 }
             }
-
+        }
+        viewModel.isAddObservationAllowed.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.fabAddObservation.visible()
+            } else {
+                binding.fabAddObservation.gone()
+            }
         }
 
     }

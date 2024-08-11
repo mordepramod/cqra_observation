@@ -1,6 +1,5 @@
 package com.example.observationapp.repository.database
 
-import androidx.lifecycle.LiveData
 import com.example.observationapp.models.Module
 import com.example.observationapp.models.Submodule
 import com.example.observationapp.models.UserModel
@@ -31,7 +30,7 @@ class LoginDBRepository @Inject constructor(
         return loginDao.getModuleData()
     }
 
-    fun getMenuSubModuleList(): LiveData<List<Submodule>> {
+    suspend fun getMenuSubModuleList(): List<Submodule> {
         return loginDao.getMenuSubModuleList()
     }
 }

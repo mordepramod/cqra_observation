@@ -23,6 +23,7 @@ import com.example.observationapp.repository.database.ObservationHistoryDBReposi
 import com.example.observationapp.repository.database.ObservationListDBRepository
 import com.example.observationapp.repository.database.ProjectDBRepository
 import com.example.observationapp.util.CommonConstant
+import com.example.observationapp.util.Utility
 import com.example.observationapp.util.Utility.getTodayDateAndTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -100,6 +101,7 @@ class ObservationViewModel @Inject constructor() : ObservationBaseViewModel() {
     var tradeId = ""
     var observationTypeId = ""
     var observationCategoryId = ""
+    var observationNumber = ""
     var observationSeverityId = ""
     var accountableId = ""
     var closeById = ""
@@ -273,6 +275,15 @@ class ObservationViewModel @Inject constructor() : ObservationBaseViewModel() {
             Log.d(TAG, "inserted saveObservationHistory: savedId: $savedId")
             return@async savedId
         }.await()
+    }
+
+    fun getObservationNumberValue(): Int {
+        return if (Utility.observationCategory.contains(observationCategoryId.toInt())) {
+            Utility.observationCategory[observationCategoryId.toInt()]!! + 1
+        } else {
+            0
+        }
+
     }
 
     companion object {

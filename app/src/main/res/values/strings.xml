@@ -99,4 +99,6 @@
     <string name="storage_permission">Storage Permission</string>
     <string name="save_image">Save Image</string>
     <string name="discard">Discard</string>
+    <string name="update">Update</string>
+    <string name="observation_number">Observation number</string>
 </resources>
